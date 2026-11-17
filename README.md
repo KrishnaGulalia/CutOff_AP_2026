@@ -59,15 +59,3 @@ CutOff_AP_2026/
     ├── 04_queries.sql        # Existing MakeMyTrip workload; needs correction in CP3
     └── 05_query_timings.md    # Empty; real measurements are required in CP4
 ```
-
-## Next steps
-
-1. Submit CP1 on the default branch and check the tracker after it refreshes.
-2. Draw the CP2 ER diagram and write PostgreSQL DDL using the final tables in CP1.
-3. Use consistent tables and relationships in the application, normalization
-   document, ER diagram, and SQL schema.
-4. For CP3, list the actual Cutoff queries and label each `READ` or `WRITE`.
-5. For CP4, run each query three times with `EXPLAIN (ANALYZE, BUFFERS)`, save the
-   plans, and report the average. Run writes inside `BEGIN` / `ROLLBACK`.
-
-No query timings or completion claims should be filled in without doing the work.
