@@ -14,6 +14,15 @@ Read **[CP1: Database normalization](dbms/01_normalization.md)**.
 It explains the data, shows the problems with one large table, and takes the
 design through **1NF → 2NF → 3NF**, with a BCNF check at the end.
 
+**[CP2: ER diagram and schema guide](dbms/02_schema_guide.md)** contains the full
+diagram, setup instructions, and validation results. Open the
+[zoomable ER diagram](dbms/02_er_diagram.svg) or the
+[PostgreSQL schema](dbms/03_schema.sql) directly.
+The [GitHub-renderable Mermaid version](dbms/02_er_diagram.md) includes the same
+named relationships, attributes, and keys.
+
+![Cutoff database ER diagram](dbms/02_er_diagram.svg)
+
 The design supports:
 
 - Student accounts and login.
@@ -41,7 +50,7 @@ design choices. The same model forms the basis of the ER diagram and SQL schema.
 | Checkpoint | Due date (2026) | Required file | Current content |
 |---|---|---|---|
 | CP1 | 16 November | `dbms/01_normalization.md` | Written: tables, keys, dependencies, 1NF, 2NF, 3NF, and BCNF discussion |
-| CP2 | 17 November | `dbms/02_er_diagram.*`, `dbms/03_schema.sql` | Not yet added |
+| CP2 | 17 November | `dbms/02_er_diagram.*`, `dbms/03_schema.sql` | Written and validated: ER diagram, all 16 tables, keys, constraints, and response guards |
 | CP3 | 19 November | `dbms/04_queries.sql` | Existing file contains MakeMyTrip queries; must be replaced with Cutoff queries |
 | CP4 | 23 November | `dbms/05_query_timings.md`, `dbms/plans/` | Timing file is empty; plans have not been added |
 
@@ -56,6 +65,11 @@ CutOff_AP_2026/
 ├── README.md
 └── dbms/
     ├── 01_normalization.md    # CP1: Cutoff database design
-    ├── 04_queries.sql        # Existing MakeMyTrip workload; needs correction in CP3
-    └── 05_query_timings.md    # Empty; real measurements are required in CP4
+    ├── 02_er_diagram.svg      # CP2: zoomable diagram
+    ├── 02_er_diagram.png      # CP2: high-resolution image
+    ├── 02_er_diagram.md       # GitHub-renderable diagram with named relationships
+    ├── 02_er_diagram.mmd      # Editable Mermaid source
+    ├── 03_schema.sql          # CP2: PostgreSQL DDL and integrity triggers
+    ├── 04_queries.sql        
+    ├── 05_query_timings.md   
 ```
