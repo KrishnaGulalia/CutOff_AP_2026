@@ -158,3 +158,46 @@ For CP4, time the prepared statements with
 query three times, and report the average. Run writes and their required setup
 inside a transaction and roll back after each run. Query timings are not yet
 recorded in this repository.
+
+## Understanding the SQL
+
+Start with R2 (one student), R5 (joining questions to their paper), and W1
+(inserting a student). Then read R11's scoring steps before R12–R14, which
+summarize those results. Table aliases use names such as `paper`, `question`,
+and `answer` so the source of each column is clear.
+
+For example, the query inside R2 is an ordinary `SELECT`:
+
+```sql
+SELECT user_id, user_name, email, user_created_at, user_updated_at
+FROM cutoff.users
+WHERE user_id = $1;
+```
+
+`$1` means “the first input value.” `EXECUTE cutoff_r2(7);` runs this query
+with `user_id = 7`. `PREPARE cutoff_r2(BIGINT) AS` gives the query its name
+and declares that input as an integer ID. Every query lists its inputs explicitly.
+
+| Syntax | Meaning in this project |
+|---|---|
+| `JOIN ... ON ...` | Combine related rows using their IDs. |
+| `LEFT JOIN` | Keep the question even when it has no saved answer or topic. |
+| `CASE WHEN ... THEN ... ELSE ... END` | Choose a value using a condition, like if/else. |
+| `COUNT(CASE WHEN outcome = 'correct' THEN 1 END)` | Count only correct answers. Other rows produce `NULL`, which `COUNT` ignores. |
+| `COALESCE(value, 0)` | Use zero when the value is missing. |
+| `NULLIF(value, 0)` | Return `NULL` when the value is zero, preventing division by zero in accuracy. |
+| `WITH name AS (...)` | Name an intermediate result for this query; it does not create a stored table. |
+| `UNION ALL` | Combine report rows, retaining every row. R13 builds separate subject, chapter, topic and difficulty groups. |
+| `ARRAY(...)` / `cardinality(...)` | Collect option labels into a list / count the labels in that list. |
+| `ON CONFLICT ... DO UPDATE` | Insert a new answer, or update it if the same answer already exists. |
+| `RETURNING` | Return the row's requested values after a write, such as its generated ID. |
+
+Scoring follows four steps: **find the submitted attempt → collect questions,
+responses and keys → decide each outcome → assign marks**. R11 returns those
+question rows. R12 totals them, R13 groups them, and R14 attaches totals to the
+student's attempt history. Each query includes the steps so it can run independently.
+
+For saving an answer, `BEGIN` starts a transaction, `COMMIT` keeps all its changes,
+and `ROLLBACK` cancels them. R17's `FOR UPDATE` locks the attempt until that
+transaction ends, so submission waits for an ongoing answer save to finish.
+The required save sequence is R17 → W3 → W4 → W5; skip W5 for numerical answers.
