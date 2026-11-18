@@ -16,8 +16,11 @@ design through **1NF → 2NF → 3NF**, with a BCNF check at the end.
 
 For CP2, open the [zoomable ER diagram](dbms/02_er_diagram.svg) or the
 [PostgreSQL schema](dbms/03_schema.sql).
-The [GitHub-renderable Mermaid version](dbms/02_er_diagram.md) includes the same
-named relationships, attributes, and keys.
+The diagram groups tables into classification, question bank, papers, and student
+activity, with column types, key markers, nullable fields, and crow's-foot cardinalities.
+The [editable Draw.io source](dbms/02_er_diagram.drawio) is included.
+The [diagram guide and Mermaid version](dbms/02_er_diagram.md) also show the
+relationships with labels such as “starts”, “contains”, and “records”.
 
 **[CP3: Application queries](dbms/04_queries.sql)** defines the SQL for Cutoff's
 student workflows and question imports using the finalized database schema.
@@ -68,7 +71,8 @@ CutOff_AP_2026/
     ├── 01_normalization.md    # CP1: Cutoff database design
     ├── 02_er_diagram.svg      # CP2: zoomable diagram
     ├── 02_er_diagram.png      # CP2: high-resolution image
-    ├── 02_er_diagram.md       # GitHub-renderable diagram with named relationships
+    ├── 02_er_diagram.drawio   # Editable source for the main SVG/PNG diagram
+    ├── 02_er_diagram.md       # Diagram guide and Mermaid with named relationships
     ├── 02_er_diagram.mmd      # Editable Mermaid source
     ├── 03_schema.sql          # CP2: PostgreSQL DDL and integrity triggers
     ├── 04_queries.sql         # CP3: parameterized application queries

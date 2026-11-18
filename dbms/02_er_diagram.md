@@ -1,7 +1,28 @@
 # Cutoff — Entity–Relationship Diagram
 
-Every relationship is named and includes crow's-foot cardinality.
-For the full-size submission image, open the [SVG](02_er_diagram.svg) or [PNG](02_er_diagram.png).
+The main diagram groups the 16 tables into **classification**, **question bank**,
+**papers**, and **student activity**. It matches the 65 columns and 18 foreign
+keys in [03_schema.sql](03_schema.sql).
+
+Open the [zoomable SVG](02_er_diagram.svg), [high-resolution PNG](02_er_diagram.png),
+or [editable Draw.io source](02_er_diagram.drawio).
+
+![Cutoff entity–relationship diagram](02_er_diagram.svg)
+
+Connector labels identify the foreign-key columns. Crow's-foot symbols show
+whether a relationship allows exactly one, zero or one, or zero or many rows.
+`PK` and `FK` mark every participating column, including composite keys.
+`UQ` marks unique constraints; composite sets are written below their tables.
+`UQ*` marks the rule allowing only one active attempt per student and paper.
+Only columns marked `NULL` are nullable.
+
+Edit the `.drawio` file and export both SVG and PNG when changing the main diagram.
+Keep the SQL schema and the Mermaid source below consistent with those changes.
+
+## Mermaid version with named relationships
+
+This alternate view labels relationships with verbs such as “starts”, “contains”,
+and “records”. Its editable source is [02_er_diagram.mmd](02_er_diagram.mmd).
 
 ```mermaid
 erDiagram
