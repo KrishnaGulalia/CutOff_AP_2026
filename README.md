@@ -151,6 +151,10 @@ parameters.
 - **Accuracy and invalid keys:** accuracy is `NULL` when nothing was attempted
   (display “N/A”). An invalid answer key is reported explicitly and prevents a
   misleading total score from being returned.
+- **Imports:** create the new paper and its content in one transaction, run R16,
+  and commit only when it returns no issues and deferred constraints pass. Used
+  questions and papers retain their content and marking rules; corrections use
+  new IDs. The full transaction sequences are at the top of the query file.
 
 
 For CP4, time the prepared statements with
