@@ -1,0 +1,728 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                                                              QUERY PLAN                                                                                               
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=4193.91..4194.01 rows=40 width=307) (actual time=0.952..0.954 rows=20.00 loops=1)
+   Sort Key: paper_question."position"
+   Sort Method: quicksort  Memory: 30kB
+   Buffers: shared hit=475 read=6 dirtied=1
+   ->  Hash Left Join  (cost=25.89..4192.85 rows=40 width=307) (actual time=0.299..0.945 rows=20.00 loops=1)
+         Hash Cond: (question.question_id = number_key.question_id)
+         Buffers: shared hit=475 read=6 dirtied=1
+         ->  Hash Left Join  (cost=24.35..34.32 rows=40 width=185) (actual time=0.069..0.097 rows=20.00 loops=1)
+               Hash Cond: (question_topic.topic_id = topic.topic_id)
+               Buffers: shared hit=20
+               ->  Hash Join  (cost=23.08..32.91 rows=40 width=185) (actual time=0.064..0.090 rows=20.00 loops=1)
+                     Hash Cond: (chapter.subject_id = subject.subject_id)
+                     Buffers: shared hit=19
+                     ->  Hash Join  (cost=22.02..31.59 rows=40 width=183) (actual time=0.060..0.084 rows=20.00 loops=1)
+                           Hash Cond: (question.chapter_id = chapter.chapter_id)
+                           Buffers: shared hit=18
+                           ->  Hash Right Join  (cost=20.88..30.28 rows=40 width=173) (actual time=0.055..0.076 rows=20.00 loops=1)
+                                 Hash Cond: (answer.question_id = question.question_id)
+                                 Buffers: shared hit=17
+                                 ->  Bitmap Heap Scan on answers answer  (cost=4.43..13.68 rows=20 width=25) (actual time=0.007..0.021 rows=20.00 loops=1)
+                                       Recheck Cond: (attempt_id = '2'::bigint)
+                                       Heap Blocks: exact=8
+                                       Buffers: shared hit=10
+                                       ->  Bitmap Index Scan on answers_pkey  (cost=0.00..4.43 rows=20 width=0) (actual time=0.003..0.003 rows=20.00 loops=1)
+                                             Index Cond: (attempt_id = '2'::bigint)
+                                             Index Searches: 1
+                                             Buffers: shared hit=2
+                                 ->  Hash  (cost=15.95..15.95 rows=40 width=164) (actual time=0.047..0.047 rows=20.00 loops=1)
+                                       Buckets: 1024  Batches: 1  Memory Usage: 13kB
+                                       Buffers: shared hit=7
+                                       ->  Hash Right Join  (cost=12.92..15.95 rows=40 width=164) (actual time=0.034..0.043 rows=20.00 loops=1)
+                                             Hash Cond: (question_topic.question_id = question.question_id)
+                                             Buffers: shared hit=7
+                                             ->  Seq Scan on question_topics question_topic  (cost=0.00..2.19 rows=119 width=16) (actual time=0.002..0.004 rows=119.00 loops=1)
+                                                   Buffers: shared hit=1
+                                             ->  Hash  (cost=12.42..12.42 rows=40 width=156) (actual time=0.030..0.030 rows=20.00 loops=1)
+                                                   Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                                                   Buffers: shared hit=6
+                                                   ->  Hash Join  (cost=7.57..12.42 rows=40 width=156) (actual time=0.020..0.027 rows=20.00 loops=1)
+                                                         Hash Cond: (question.question_id = paper_question.question_id)
+                                                         Buffers: shared hit=6
+                                                         ->  Seq Scan on questions question  (cost=0.00..4.20 rows=120 width=131) (actual time=0.002..0.005 rows=120.00 loops=1)
+                                                               Buffers: shared hit=3
+                                                         ->  Hash  (cost=7.07..7.07 rows=40 width=33) (actual time=0.016..0.017 rows=20.00 loops=1)
+                                                               Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                               Buffers: shared hit=3
+                                                               ->  Hash Join  (cost=1.59..7.07 rows=40 width=33) (actual time=0.008..0.014 rows=20.00 loops=1)
+                                                                     Hash Cond: (paper_question.test_id = attempts.test_id)
+                                                                     Buffers: shared hit=3
+                                                                     ->  Seq Scan on test_questions paper_question  (cost=0.00..4.40 rows=240 width=33) (actual time=0.001..0.004 rows=120.00 loops=1)
+                                                                           Buffers: shared hit=2
+                                                                     ->  Hash  (cost=1.58..1.58 rows=1 width=16) (actual time=0.004..0.004 rows=1.00 loops=1)
+                                                                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                                                           Buffers: shared hit=1
+                                                                           ->  Seq Scan on attempts  (cost=0.00..1.58 rows=1 width=16) (actual time=0.002..0.003 rows=1.00 loops=1)
+                                                                                 Filter: ((user_id = '2'::bigint) AND (attempt_id = '2'::bigint) AND (attempt_status = 'SUBMITTED'::text))
+                                                                                 Rows Removed by Filter: 32
+                                                                                 Buffers: shared hit=1
+                           ->  Hash  (cost=1.06..1.06 rows=6 width=26) (actual time=0.002..0.002 rows=6.00 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                 Buffers: shared hit=1
+                                 ->  Seq Scan on chapters chapter  (cost=0.00..1.06 rows=6 width=26) (actual time=0.001..0.001 rows=6.00 loops=1)
+                                       Buffers: shared hit=1
+                     ->  Hash  (cost=1.03..1.03 rows=3 width=18) (actual time=0.003..0.003 rows=3.00 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                           Buffers: shared hit=1
+                           ->  Seq Scan on subjects subject  (cost=0.00..1.03 rows=3 width=18) (actual time=0.001..0.001 rows=3.00 loops=1)
+                                 Buffers: shared hit=1
+               ->  Hash  (cost=1.12..1.12 rows=12 width=16) (actual time=0.003..0.003 rows=12.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on topics topic  (cost=0.00..1.12 rows=12 width=16) (actual time=0.001..0.001 rows=12.00 loops=1)
+                           Buffers: shared hit=1
+         ->  Hash  (cost=1.24..1.24 rows=24 width=18) (actual time=0.005..0.005 rows=24.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 10kB
+               Buffers: shared hit=1
+               ->  Seq Scan on numerical_keys number_key  (cost=0.00..1.24 rows=24 width=18) (actual time=0.001..0.002 rows=24.00 loops=1)
+                     Buffers: shared hit=1
+         SubPlan 1
+           ->  Index Only Scan using answer_options_pkey on answer_options selected  (cost=0.27..8.29 rows=1 width=2) (actual time=0.002..0.002 rows=0.80 loops=20)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 20
+                 Buffers: shared hit=53 read=3
+         SubPlan 2
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.007..0.007 rows=1.40 loops=20)
+                 Sort Key: answer_key.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=19 read=1 dirtied=1
+                 ->  Seq Scan on correct_options answer_key  (cost=0.00..3.10 rows=2 width=2) (actual time=0.005..0.006 rows=1.40 loops=20)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 167
+                       Buffers: shared hit=19 read=1 dirtied=1
+         SubPlan 3
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.033..0.033 rows=1.00 loops=4)
+                 Buffers: shared hit=6 read=2
+                 ->  Bitmap Heap Scan on question_options option  (cost=4.30..8.56 rows=4 width=0) (actual time=0.033..0.033 rows=0.00 loops=4)
+                       Recheck Cond: (question_id = question.question_id)
+                       Buffers: shared hit=6 read=2
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.032..0.032 rows=0.00 loops=4)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 4
+                             Buffers: shared hit=6 read=2
+         SubPlan 4
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.005..0.005 rows=0.00 loops=4)
+                 Sort Key: answer_key_1.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_1  (cost=0.00..3.10 rows=2 width=2) (actual time=0.004..0.004 rows=0.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 168
+                       Buffers: shared hit=4
+         SubPlan 5
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.002 rows=1.00 loops=16)
+                 Buffers: shared hit=48
+                 ->  Bitmap Heap Scan on question_options option_1  (cost=4.30..8.56 rows=4 width=0) (actual time=0.001..0.001 rows=4.00 loops=16)
+                       Recheck Cond: (question_id = question.question_id)
+                       Heap Blocks: exact=16
+                       Buffers: shared hit=48
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=4.00 loops=16)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 16
+                             Buffers: shared hit=32
+         SubPlan 6
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_2.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_2  (cost=0.00..3.10 rows=2 width=2) (actual time=0.002..0.004 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+         SubPlan 7
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.005..0.005 rows=1.00 loops=4)
+                 Sort Key: answer_key_3.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_3  (cost=0.00..3.10 rows=2 width=2) (actual time=0.003..0.004 rows=1.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 167
+                       Buffers: shared hit=4
+         SubPlan 8
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_1  (cost=0.27..8.29 rows=1 width=2) (actual time=0.001..0.001 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 9
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_2  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.001 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 10
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_4.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_4  (cost=0.00..3.10 rows=2 width=2) (actual time=0.002..0.004 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+         SubPlan 11
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=4)
+                 Buffers: shared hit=8
+                 ->  Bitmap Heap Scan on question_options option_2  (cost=4.30..8.56 rows=4 width=0) (actual time=0.001..0.001 rows=0.00 loops=4)
+                       Recheck Cond: (question_id = question.question_id)
+                       Buffers: shared hit=8
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=0.00 loops=4)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 4
+                             Buffers: shared hit=8
+         SubPlan 12
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.005..0.005 rows=0.00 loops=4)
+                 Sort Key: answer_key_5.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_5  (cost=0.00..3.10 rows=2 width=2) (actual time=0.004..0.004 rows=0.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 168
+                       Buffers: shared hit=4
+         SubPlan 13
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=16)
+                 Buffers: shared hit=48
+                 ->  Bitmap Heap Scan on question_options option_3  (cost=4.30..8.56 rows=4 width=0) (actual time=0.001..0.001 rows=4.00 loops=16)
+                       Recheck Cond: (question_id = question.question_id)
+                       Heap Blocks: exact=16
+                       Buffers: shared hit=48
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=4.00 loops=16)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 16
+                             Buffers: shared hit=32
+         SubPlan 14
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_6.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_6  (cost=0.00..3.10 rows=2 width=2) (actual time=0.001..0.004 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+         SubPlan 15
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.005..0.005 rows=1.00 loops=4)
+                 Sort Key: answer_key_7.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_7  (cost=0.00..3.10 rows=2 width=2) (actual time=0.003..0.004 rows=1.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 167
+                       Buffers: shared hit=4
+         SubPlan 16
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_3  (cost=0.27..8.29 rows=1 width=2) (actual time=0.001..0.001 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 17
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_4  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.001 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 18
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_8.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_8  (cost=0.00..3.10 rows=2 width=2) (actual time=0.002..0.004 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+ Planning:
+   Buffers: shared hit=93 read=4 dirtied=2
+ Planning Time: 1.523 ms
+ Execution Time: 1.029 ms
+(235 rows)
+
+
+
+===== RUN 2 =====
+                                                                                              QUERY PLAN                                                                                               
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=4193.91..4194.01 rows=40 width=307) (actual time=0.658..0.661 rows=20.00 loops=1)
+   Sort Key: paper_question."position"
+   Sort Method: quicksort  Memory: 30kB
+   Buffers: shared hit=481
+   ->  Hash Left Join  (cost=25.89..4192.85 rows=40 width=307) (actual time=0.073..0.655 rows=20.00 loops=1)
+         Hash Cond: (question.question_id = number_key.question_id)
+         Buffers: shared hit=481
+         ->  Hash Left Join  (cost=24.35..34.32 rows=40 width=185) (actual time=0.047..0.063 rows=20.00 loops=1)
+               Hash Cond: (question_topic.topic_id = topic.topic_id)
+               Buffers: shared hit=20
+               ->  Hash Join  (cost=23.08..32.91 rows=40 width=185) (actual time=0.044..0.058 rows=20.00 loops=1)
+                     Hash Cond: (chapter.subject_id = subject.subject_id)
+                     Buffers: shared hit=19
+                     ->  Hash Join  (cost=22.02..31.59 rows=40 width=183) (actual time=0.041..0.053 rows=20.00 loops=1)
+                           Hash Cond: (question.chapter_id = chapter.chapter_id)
+                           Buffers: shared hit=18
+                           ->  Hash Right Join  (cost=20.88..30.28 rows=40 width=173) (actual time=0.039..0.048 rows=20.00 loops=1)
+                                 Hash Cond: (answer.question_id = question.question_id)
+                                 Buffers: shared hit=17
+                                 ->  Bitmap Heap Scan on answers answer  (cost=4.43..13.68 rows=20 width=25) (actual time=0.003..0.005 rows=20.00 loops=1)
+                                       Recheck Cond: (attempt_id = '2'::bigint)
+                                       Heap Blocks: exact=8
+                                       Buffers: shared hit=10
+                                       ->  Bitmap Index Scan on answers_pkey  (cost=0.00..4.43 rows=20 width=0) (actual time=0.001..0.001 rows=20.00 loops=1)
+                                             Index Cond: (attempt_id = '2'::bigint)
+                                             Index Searches: 1
+                                             Buffers: shared hit=2
+                                 ->  Hash  (cost=15.95..15.95 rows=40 width=164) (actual time=0.036..0.036 rows=20.00 loops=1)
+                                       Buckets: 1024  Batches: 1  Memory Usage: 13kB
+                                       Buffers: shared hit=7
+                                       ->  Hash Right Join  (cost=12.92..15.95 rows=40 width=164) (actual time=0.025..0.034 rows=20.00 loops=1)
+                                             Hash Cond: (question_topic.question_id = question.question_id)
+                                             Buffers: shared hit=7
+                                             ->  Seq Scan on question_topics question_topic  (cost=0.00..2.19 rows=119 width=16) (actual time=0.001..0.004 rows=119.00 loops=1)
+                                                   Buffers: shared hit=1
+                                             ->  Hash  (cost=12.42..12.42 rows=40 width=156) (actual time=0.023..0.023 rows=20.00 loops=1)
+                                                   Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                                                   Buffers: shared hit=6
+                                                   ->  Hash Join  (cost=7.57..12.42 rows=40 width=156) (actual time=0.014..0.021 rows=20.00 loops=1)
+                                                         Hash Cond: (question.question_id = paper_question.question_id)
+                                                         Buffers: shared hit=6
+                                                         ->  Seq Scan on questions question  (cost=0.00..4.20 rows=120 width=131) (actual time=0.001..0.004 rows=120.00 loops=1)
+                                                               Buffers: shared hit=3
+                                                         ->  Hash  (cost=7.07..7.07 rows=40 width=33) (actual time=0.012..0.012 rows=20.00 loops=1)
+                                                               Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                               Buffers: shared hit=3
+                                                               ->  Hash Join  (cost=1.59..7.07 rows=40 width=33) (actual time=0.004..0.011 rows=20.00 loops=1)
+                                                                     Hash Cond: (paper_question.test_id = attempts.test_id)
+                                                                     Buffers: shared hit=3
+                                                                     ->  Seq Scan on test_questions paper_question  (cost=0.00..4.40 rows=240 width=33) (actual time=0.001..0.004 rows=120.00 loops=1)
+                                                                           Buffers: shared hit=2
+                                                                     ->  Hash  (cost=1.58..1.58 rows=1 width=16) (actual time=0.003..0.003 rows=1.00 loops=1)
+                                                                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                                                           Buffers: shared hit=1
+                                                                           ->  Seq Scan on attempts  (cost=0.00..1.58 rows=1 width=16) (actual time=0.001..0.002 rows=1.00 loops=1)
+                                                                                 Filter: ((user_id = '2'::bigint) AND (attempt_id = '2'::bigint) AND (attempt_status = 'SUBMITTED'::text))
+                                                                                 Rows Removed by Filter: 32
+                                                                                 Buffers: shared hit=1
+                           ->  Hash  (cost=1.06..1.06 rows=6 width=26) (actual time=0.001..0.001 rows=6.00 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                 Buffers: shared hit=1
+                                 ->  Seq Scan on chapters chapter  (cost=0.00..1.06 rows=6 width=26) (actual time=0.001..0.001 rows=6.00 loops=1)
+                                       Buffers: shared hit=1
+                     ->  Hash  (cost=1.03..1.03 rows=3 width=18) (actual time=0.002..0.002 rows=3.00 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                           Buffers: shared hit=1
+                           ->  Seq Scan on subjects subject  (cost=0.00..1.03 rows=3 width=18) (actual time=0.002..0.002 rows=3.00 loops=1)
+                                 Buffers: shared hit=1
+               ->  Hash  (cost=1.12..1.12 rows=12 width=16) (actual time=0.002..0.002 rows=12.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on topics topic  (cost=0.00..1.12 rows=12 width=16) (actual time=0.001..0.001 rows=12.00 loops=1)
+                           Buffers: shared hit=1
+         ->  Hash  (cost=1.24..1.24 rows=24 width=18) (actual time=0.003..0.003 rows=24.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 10kB
+               Buffers: shared hit=1
+               ->  Seq Scan on numerical_keys number_key  (cost=0.00..1.24 rows=24 width=18) (actual time=0.001..0.002 rows=24.00 loops=1)
+                     Buffers: shared hit=1
+         SubPlan 1
+           ->  Index Only Scan using answer_options_pkey on answer_options selected  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.001 rows=0.80 loops=20)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 20
+                 Buffers: shared hit=56
+         SubPlan 2
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.40 loops=20)
+                 Sort Key: answer_key.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=20
+                 ->  Seq Scan on correct_options answer_key  (cost=0.00..3.10 rows=2 width=2) (actual time=0.002..0.004 rows=1.40 loops=20)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 167
+                       Buffers: shared hit=20
+         SubPlan 3
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=4)
+                 Buffers: shared hit=8
+                 ->  Bitmap Heap Scan on question_options option  (cost=4.30..8.56 rows=4 width=0) (actual time=0.001..0.001 rows=0.00 loops=4)
+                       Recheck Cond: (question_id = question.question_id)
+                       Buffers: shared hit=8
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=0.00 loops=4)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 4
+                             Buffers: shared hit=8
+         SubPlan 4
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=0.00 loops=4)
+                 Sort Key: answer_key_1.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_1  (cost=0.00..3.10 rows=2 width=2) (actual time=0.004..0.004 rows=0.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 168
+                       Buffers: shared hit=4
+         SubPlan 5
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=16)
+                 Buffers: shared hit=48
+                 ->  Bitmap Heap Scan on question_options option_1  (cost=4.30..8.56 rows=4 width=0) (actual time=0.001..0.001 rows=4.00 loops=16)
+                       Recheck Cond: (question_id = question.question_id)
+                       Heap Blocks: exact=16
+                       Buffers: shared hit=48
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=4.00 loops=16)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 16
+                             Buffers: shared hit=32
+         SubPlan 6
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_2.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_2  (cost=0.00..3.10 rows=2 width=2) (actual time=0.002..0.004 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+         SubPlan 7
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.00 loops=4)
+                 Sort Key: answer_key_3.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_3  (cost=0.00..3.10 rows=2 width=2) (actual time=0.003..0.004 rows=1.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 167
+                       Buffers: shared hit=4
+         SubPlan 8
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_1  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.001 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 9
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_2  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.000 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 10
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_4.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_4  (cost=0.00..3.10 rows=2 width=2) (actual time=0.002..0.004 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+         SubPlan 11
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=4)
+                 Buffers: shared hit=8
+                 ->  Bitmap Heap Scan on question_options option_2  (cost=4.30..8.56 rows=4 width=0) (actual time=0.000..0.001 rows=0.00 loops=4)
+                       Recheck Cond: (question_id = question.question_id)
+                       Buffers: shared hit=8
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=0.00 loops=4)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 4
+                             Buffers: shared hit=8
+         SubPlan 12
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=0.00 loops=4)
+                 Sort Key: answer_key_5.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_5  (cost=0.00..3.10 rows=2 width=2) (actual time=0.004..0.004 rows=0.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 168
+                       Buffers: shared hit=4
+         SubPlan 13
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=16)
+                 Buffers: shared hit=48
+                 ->  Bitmap Heap Scan on question_options option_3  (cost=4.30..8.56 rows=4 width=0) (actual time=0.001..0.001 rows=4.00 loops=16)
+                       Recheck Cond: (question_id = question.question_id)
+                       Heap Blocks: exact=16
+                       Buffers: shared hit=48
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=4.00 loops=16)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 16
+                             Buffers: shared hit=32
+         SubPlan 14
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_6.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_6  (cost=0.00..3.10 rows=2 width=2) (actual time=0.002..0.004 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+         SubPlan 15
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.00 loops=4)
+                 Sort Key: answer_key_7.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_7  (cost=0.00..3.10 rows=2 width=2) (actual time=0.003..0.004 rows=1.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 167
+                       Buffers: shared hit=4
+         SubPlan 16
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_3  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.001 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 17
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_4  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.000 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 18
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_8.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_8  (cost=0.00..3.10 rows=2 width=2) (actual time=0.002..0.004 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+ Planning:
+   Buffers: shared hit=38
+ Planning Time: 0.731 ms
+ Execution Time: 0.704 ms
+(235 rows)
+
+
+
+===== RUN 3 =====
+                                                                                              QUERY PLAN                                                                                               
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=4193.91..4194.01 rows=40 width=307) (actual time=0.637..0.640 rows=20.00 loops=1)
+   Sort Key: paper_question."position"
+   Sort Method: quicksort  Memory: 30kB
+   Buffers: shared hit=481
+   ->  Hash Left Join  (cost=25.89..4192.85 rows=40 width=307) (actual time=0.072..0.635 rows=20.00 loops=1)
+         Hash Cond: (question.question_id = number_key.question_id)
+         Buffers: shared hit=481
+         ->  Hash Left Join  (cost=24.35..34.32 rows=40 width=185) (actual time=0.045..0.061 rows=20.00 loops=1)
+               Hash Cond: (question_topic.topic_id = topic.topic_id)
+               Buffers: shared hit=20
+               ->  Hash Join  (cost=23.08..32.91 rows=40 width=185) (actual time=0.042..0.056 rows=20.00 loops=1)
+                     Hash Cond: (chapter.subject_id = subject.subject_id)
+                     Buffers: shared hit=19
+                     ->  Hash Join  (cost=22.02..31.59 rows=40 width=183) (actual time=0.040..0.052 rows=20.00 loops=1)
+                           Hash Cond: (question.chapter_id = chapter.chapter_id)
+                           Buffers: shared hit=18
+                           ->  Hash Right Join  (cost=20.88..30.28 rows=40 width=173) (actual time=0.038..0.047 rows=20.00 loops=1)
+                                 Hash Cond: (answer.question_id = question.question_id)
+                                 Buffers: shared hit=17
+                                 ->  Bitmap Heap Scan on answers answer  (cost=4.43..13.68 rows=20 width=25) (actual time=0.002..0.005 rows=20.00 loops=1)
+                                       Recheck Cond: (attempt_id = '2'::bigint)
+                                       Heap Blocks: exact=8
+                                       Buffers: shared hit=10
+                                       ->  Bitmap Index Scan on answers_pkey  (cost=0.00..4.43 rows=20 width=0) (actual time=0.001..0.001 rows=20.00 loops=1)
+                                             Index Cond: (attempt_id = '2'::bigint)
+                                             Index Searches: 1
+                                             Buffers: shared hit=2
+                                 ->  Hash  (cost=15.95..15.95 rows=40 width=164) (actual time=0.035..0.035 rows=20.00 loops=1)
+                                       Buckets: 1024  Batches: 1  Memory Usage: 13kB
+                                       Buffers: shared hit=7
+                                       ->  Hash Right Join  (cost=12.92..15.95 rows=40 width=164) (actual time=0.024..0.033 rows=20.00 loops=1)
+                                             Hash Cond: (question_topic.question_id = question.question_id)
+                                             Buffers: shared hit=7
+                                             ->  Seq Scan on question_topics question_topic  (cost=0.00..2.19 rows=119 width=16) (actual time=0.001..0.004 rows=119.00 loops=1)
+                                                   Buffers: shared hit=1
+                                             ->  Hash  (cost=12.42..12.42 rows=40 width=156) (actual time=0.023..0.023 rows=20.00 loops=1)
+                                                   Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                                                   Buffers: shared hit=6
+                                                   ->  Hash Join  (cost=7.57..12.42 rows=40 width=156) (actual time=0.013..0.021 rows=20.00 loops=1)
+                                                         Hash Cond: (question.question_id = paper_question.question_id)
+                                                         Buffers: shared hit=6
+                                                         ->  Seq Scan on questions question  (cost=0.00..4.20 rows=120 width=131) (actual time=0.001..0.003 rows=120.00 loops=1)
+                                                               Buffers: shared hit=3
+                                                         ->  Hash  (cost=7.07..7.07 rows=40 width=33) (actual time=0.012..0.012 rows=20.00 loops=1)
+                                                               Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                               Buffers: shared hit=3
+                                                               ->  Hash Join  (cost=1.59..7.07 rows=40 width=33) (actual time=0.004..0.011 rows=20.00 loops=1)
+                                                                     Hash Cond: (paper_question.test_id = attempts.test_id)
+                                                                     Buffers: shared hit=3
+                                                                     ->  Seq Scan on test_questions paper_question  (cost=0.00..4.40 rows=240 width=33) (actual time=0.001..0.003 rows=120.00 loops=1)
+                                                                           Buffers: shared hit=2
+                                                                     ->  Hash  (cost=1.58..1.58 rows=1 width=16) (actual time=0.003..0.003 rows=1.00 loops=1)
+                                                                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                                                           Buffers: shared hit=1
+                                                                           ->  Seq Scan on attempts  (cost=0.00..1.58 rows=1 width=16) (actual time=0.002..0.002 rows=1.00 loops=1)
+                                                                                 Filter: ((user_id = '2'::bigint) AND (attempt_id = '2'::bigint) AND (attempt_status = 'SUBMITTED'::text))
+                                                                                 Rows Removed by Filter: 32
+                                                                                 Buffers: shared hit=1
+                           ->  Hash  (cost=1.06..1.06 rows=6 width=26) (actual time=0.001..0.001 rows=6.00 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                 Buffers: shared hit=1
+                                 ->  Seq Scan on chapters chapter  (cost=0.00..1.06 rows=6 width=26) (actual time=0.001..0.001 rows=6.00 loops=1)
+                                       Buffers: shared hit=1
+                     ->  Hash  (cost=1.03..1.03 rows=3 width=18) (actual time=0.002..0.002 rows=3.00 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                           Buffers: shared hit=1
+                           ->  Seq Scan on subjects subject  (cost=0.00..1.03 rows=3 width=18) (actual time=0.001..0.001 rows=3.00 loops=1)
+                                 Buffers: shared hit=1
+               ->  Hash  (cost=1.12..1.12 rows=12 width=16) (actual time=0.002..0.002 rows=12.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on topics topic  (cost=0.00..1.12 rows=12 width=16) (actual time=0.001..0.001 rows=12.00 loops=1)
+                           Buffers: shared hit=1
+         ->  Hash  (cost=1.24..1.24 rows=24 width=18) (actual time=0.003..0.003 rows=24.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 10kB
+               Buffers: shared hit=1
+               ->  Seq Scan on numerical_keys number_key  (cost=0.00..1.24 rows=24 width=18) (actual time=0.001..0.002 rows=24.00 loops=1)
+                     Buffers: shared hit=1
+         SubPlan 1
+           ->  Index Only Scan using answer_options_pkey on answer_options selected  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.001 rows=0.80 loops=20)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 20
+                 Buffers: shared hit=56
+         SubPlan 2
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.40 loops=20)
+                 Sort Key: answer_key.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=20
+                 ->  Seq Scan on correct_options answer_key  (cost=0.00..3.10 rows=2 width=2) (actual time=0.002..0.004 rows=1.40 loops=20)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 167
+                       Buffers: shared hit=20
+         SubPlan 3
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=4)
+                 Buffers: shared hit=8
+                 ->  Bitmap Heap Scan on question_options option  (cost=4.30..8.56 rows=4 width=0) (actual time=0.001..0.001 rows=0.00 loops=4)
+                       Recheck Cond: (question_id = question.question_id)
+                       Buffers: shared hit=8
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=0.00 loops=4)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 4
+                             Buffers: shared hit=8
+         SubPlan 4
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=0.00 loops=4)
+                 Sort Key: answer_key_1.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_1  (cost=0.00..3.10 rows=2 width=2) (actual time=0.004..0.004 rows=0.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 168
+                       Buffers: shared hit=4
+         SubPlan 5
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=16)
+                 Buffers: shared hit=48
+                 ->  Bitmap Heap Scan on question_options option_1  (cost=4.30..8.56 rows=4 width=0) (actual time=0.001..0.001 rows=4.00 loops=16)
+                       Recheck Cond: (question_id = question.question_id)
+                       Heap Blocks: exact=16
+                       Buffers: shared hit=48
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=4.00 loops=16)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 16
+                             Buffers: shared hit=32
+         SubPlan 6
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_2.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_2  (cost=0.00..3.10 rows=2 width=2) (actual time=0.001..0.003 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+         SubPlan 7
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.00 loops=4)
+                 Sort Key: answer_key_3.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_3  (cost=0.00..3.10 rows=2 width=2) (actual time=0.003..0.004 rows=1.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 167
+                       Buffers: shared hit=4
+         SubPlan 8
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_1  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.000 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 9
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_2  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.000 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 10
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_4.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_4  (cost=0.00..3.10 rows=2 width=2) (actual time=0.001..0.004 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+         SubPlan 11
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=4)
+                 Buffers: shared hit=8
+                 ->  Bitmap Heap Scan on question_options option_2  (cost=4.30..8.56 rows=4 width=0) (actual time=0.000..0.001 rows=0.00 loops=4)
+                       Recheck Cond: (question_id = question.question_id)
+                       Buffers: shared hit=8
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=0.00 loops=4)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 4
+                             Buffers: shared hit=8
+         SubPlan 12
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=0.00 loops=4)
+                 Sort Key: answer_key_5.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_5  (cost=0.00..3.10 rows=2 width=2) (actual time=0.003..0.003 rows=0.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 168
+                       Buffers: shared hit=4
+         SubPlan 13
+           ->  Aggregate  (cost=8.57..8.58 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=16)
+                 Buffers: shared hit=48
+                 ->  Bitmap Heap Scan on question_options option_3  (cost=4.30..8.56 rows=4 width=0) (actual time=0.001..0.001 rows=4.00 loops=16)
+                       Recheck Cond: (question_id = question.question_id)
+                       Heap Blocks: exact=16
+                       Buffers: shared hit=48
+                       ->  Bitmap Index Scan on question_options_pkey  (cost=0.00..4.30 rows=4 width=0) (actual time=0.000..0.000 rows=4.00 loops=16)
+                             Index Cond: (question_id = question.question_id)
+                             Index Searches: 16
+                             Buffers: shared hit=32
+         SubPlan 14
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_6.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_6  (cost=0.00..3.10 rows=2 width=2) (actual time=0.001..0.003 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+         SubPlan 15
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.00 loops=4)
+                 Sort Key: answer_key_7.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=4
+                 ->  Seq Scan on correct_options answer_key_7  (cost=0.00..3.10 rows=2 width=2) (actual time=0.003..0.004 rows=1.00 loops=4)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 167
+                       Buffers: shared hit=4
+         SubPlan 16
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_3  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.000 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 17
+           ->  Index Only Scan using answer_options_pkey on answer_options selected_4  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.000 rows=1.00 loops=16)
+                 Index Cond: ((attempt_id = attempts.attempt_id) AND (question_id = question.question_id))
+                 Heap Fetches: 16
+                 Index Searches: 16
+                 Buffers: shared hit=48
+         SubPlan 18
+           ->  Sort  (cost=3.11..3.11 rows=2 width=2) (actual time=0.004..0.004 rows=1.75 loops=16)
+                 Sort Key: answer_key_8.option_label
+                 Sort Method: quicksort  Memory: 25kB
+                 Buffers: shared hit=16
+                 ->  Seq Scan on correct_options answer_key_8  (cost=0.00..3.10 rows=2 width=2) (actual time=0.001..0.003 rows=1.75 loops=16)
+                       Filter: (question_id = question.question_id)
+                       Rows Removed by Filter: 166
+                       Buffers: shared hit=16
+ Planning:
+   Buffers: shared hit=38
+ Planning Time: 0.706 ms
+ Execution Time: 0.677 ms
+(235 rows)
+

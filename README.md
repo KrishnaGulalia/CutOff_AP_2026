@@ -23,7 +23,8 @@ The [diagram guide and Mermaid version](dbms/02_er_diagram.md) also show the
 relationships with labels such as “starts”, “contains”, and “records”.
 
 **[CP3: Application queries](dbms/04_queries.sql)** defines the SQL for Cutoff's
-student workflows and question imports using the finalized database schema.
+student workflows and question imports using the finalized database schema. The
+[query catalogue](dbms/04_queries.md) documents all 37 prepared statements.
 
 ![Cutoff database ER diagram](dbms/02_er_diagram.svg)
 
@@ -56,7 +57,7 @@ design choices. The same model forms the basis of the ER diagram and SQL schema.
 | CP1 | 16 November | `dbms/01_normalization.md` | Written: tables, keys, dependencies, 1NF, 2NF, 3NF, and BCNF discussion |
 | CP2 | 17 November | `dbms/02_er_diagram.*`, `dbms/03_schema.sql` | Written and validated: ER diagram, all 16 tables, keys, constraints, and response guards |
 | CP3 | 19 November | `dbms/04_queries.sql` | Written and validated: 18 READ queries and 19 WRITE queries |
-| CP4 | 23 November | `dbms/05_query_timings.md`, `dbms/plans/` | Timing file is empty; plans have not been added |
+| CP4 | 23 November | `dbms/05_query_timings.md`, `dbms/plans/` | Three measured runs per query; one combined plan file per query ID |
 
 The tracker checks files with real content on the repository's **default branch**.
 Writing a file locally does not submit it. Every team member must also have their
@@ -76,7 +77,9 @@ CutOff_AP_2026/
     ├── 02_er_diagram.mmd      # Editable Mermaid source
     ├── 03_schema.sql          # CP2: PostgreSQL DDL and integrity triggers
     ├── 04_queries.sql         # CP3: parameterized application queries
-    └── 05_query_timings.md    # CP4: query measurements
+    ├── 04_queries.md          # CP3: catalogue of all 37 prepared statements
+    ├── 05_query_timings.md    # CP4: measured query performance
+    └── plans/                 # CP4: three actual plans per query
 ```
 
 ## CP3 query index
@@ -157,11 +160,12 @@ parameters.
   new IDs. The full transaction sequences are at the top of the query file.
 
 
-For CP4, time the prepared statements with
-`EXPLAIN (ANALYZE, BUFFERS) EXECUTE ...`. Use real fixture parameters, repeat each
-query three times, and report the average. Run writes and their required setup
-inside a transaction and roll back after each run. Query timings are not yet
-recorded in this repository.
+CP4 records three actual `EXPLAIN (ANALYZE, BUFFERS)` runs for every prepared
+query, averages the reported execution times, and saves the three plans for each
+query ID under [`dbms/plans/`](dbms/plans/). Write queries and their prerequisite
+setup were run inside transactions and rolled back. See
+[`dbms/05_query_timings.md`](dbms/05_query_timings.md) for methodology, plan
+analysis, observations and optimization ideas.
 
 ## Understanding the SQL
 

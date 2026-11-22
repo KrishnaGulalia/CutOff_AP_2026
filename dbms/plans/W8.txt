@@ -1,0 +1,53 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                             QUERY PLAN                                             
+----------------------------------------------------------------------------------------------------
+ Insert on subjects  (cost=0.00..0.01 rows=1 width=40) (actual time=0.180..0.181 rows=1.00 loops=1)
+   Conflict Resolution: NOTHING
+   Conflict Arbiter Indexes: subjects_subject_name_key
+   Tuples Inserted: 1
+   Conflicting Tuples: 0
+   Buffers: shared hit=15 read=2 dirtied=2
+   ->  Result  (cost=0.00..0.01 rows=1 width=40) (actual time=0.161..0.161 rows=1.00 loops=1)
+         Buffers: shared hit=10 read=1 dirtied=1
+ Planning Time: 0.006 ms
+ Execution Time: 0.183 ms
+(10 rows)
+
+
+
+===== RUN 2 =====
+                                             QUERY PLAN                                             
+----------------------------------------------------------------------------------------------------
+ Insert on subjects  (cost=0.00..0.01 rows=1 width=40) (actual time=0.009..0.009 rows=1.00 loops=1)
+   Conflict Resolution: NOTHING
+   Conflict Arbiter Indexes: subjects_subject_name_key
+   Tuples Inserted: 1
+   Conflicting Tuples: 0
+   Buffers: shared hit=7
+   ->  Result  (cost=0.00..0.01 rows=1 width=40) (actual time=0.001..0.001 rows=1.00 loops=1)
+         Buffers: shared hit=1
+ Planning Time: 0.004 ms
+ Execution Time: 0.010 ms
+(10 rows)
+
+
+
+===== RUN 3 =====
+                                             QUERY PLAN                                             
+----------------------------------------------------------------------------------------------------
+ Insert on subjects  (cost=0.00..0.01 rows=1 width=40) (actual time=0.005..0.005 rows=1.00 loops=1)
+   Conflict Resolution: NOTHING
+   Conflict Arbiter Indexes: subjects_subject_name_key
+   Tuples Inserted: 1
+   Conflicting Tuples: 0
+   Buffers: shared hit=7
+   ->  Result  (cost=0.00..0.01 rows=1 width=40) (actual time=0.000..0.000 rows=1.00 loops=1)
+         Buffers: shared hit=1
+ Planning Time: 0.004 ms
+ Execution Time: 0.006 ms
+(10 rows)
+

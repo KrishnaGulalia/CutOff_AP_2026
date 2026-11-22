@@ -1,0 +1,32 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                      QUERY PLAN                                       
+---------------------------------------------------------------------------------------
+ Result  (cost=0.00..0.01 rows=1 width=4) (actual time=0.000..0.000 rows=1.00 loops=1)
+ Planning Time: 0.003 ms
+ Execution Time: 0.001 ms
+(3 rows)
+
+
+
+===== RUN 2 =====
+                                      QUERY PLAN                                       
+---------------------------------------------------------------------------------------
+ Result  (cost=0.00..0.01 rows=1 width=4) (actual time=0.000..0.000 rows=1.00 loops=1)
+ Planning Time: 0.000 ms
+ Execution Time: 0.001 ms
+(3 rows)
+
+
+
+===== RUN 3 =====
+                                      QUERY PLAN                                       
+---------------------------------------------------------------------------------------
+ Result  (cost=0.00..0.01 rows=1 width=4) (actual time=0.000..0.000 rows=1.00 loops=1)
+ Planning Time: 0.000 ms
+ Execution Time: 0.001 ms
+(3 rows)
+

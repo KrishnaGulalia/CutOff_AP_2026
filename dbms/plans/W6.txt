@@ -1,0 +1,50 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                     QUERY PLAN                                                      
+---------------------------------------------------------------------------------------------------------------------
+ Update on attempts  (cost=0.00..1.58 rows=1 width=46) (actual time=0.055..0.056 rows=1.00 loops=1)
+   Buffers: shared hit=17
+   ->  Seq Scan on attempts  (cost=0.00..1.58 rows=1 width=46) (actual time=0.002..0.003 rows=1.00 loops=1)
+         Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+         Rows Removed by Filter: 32
+         Buffers: shared hit=1
+ Planning Time: 0.015 ms
+ Trigger attempts_guard: time=0.038 calls=1
+ Execution Time: 0.063 ms
+(9 rows)
+
+
+
+===== RUN 2 =====
+                                                     QUERY PLAN                                                      
+---------------------------------------------------------------------------------------------------------------------
+ Update on attempts  (cost=0.00..1.58 rows=1 width=46) (actual time=0.016..0.017 rows=1.00 loops=1)
+   Buffers: shared hit=8
+   ->  Seq Scan on attempts  (cost=0.00..1.58 rows=1 width=46) (actual time=0.002..0.003 rows=1.00 loops=1)
+         Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+         Rows Removed by Filter: 32
+         Buffers: shared hit=1
+ Planning Time: 0.014 ms
+ Trigger attempts_guard: time=0.003 calls=1
+ Execution Time: 0.020 ms
+(9 rows)
+
+
+
+===== RUN 3 =====
+                                                     QUERY PLAN                                                      
+---------------------------------------------------------------------------------------------------------------------
+ Update on attempts  (cost=0.00..1.58 rows=1 width=46) (actual time=0.013..0.014 rows=1.00 loops=1)
+   Buffers: shared hit=8
+   ->  Seq Scan on attempts  (cost=0.00..1.58 rows=1 width=46) (actual time=0.002..0.003 rows=1.00 loops=1)
+         Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+         Rows Removed by Filter: 32
+         Buffers: shared hit=1
+ Planning Time: 0.011 ms
+ Trigger attempts_guard: time=0.002 calls=1
+ Execution Time: 0.016 ms
+(9 rows)
+

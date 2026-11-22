@@ -1,0 +1,155 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                                             QUERY PLAN                                                                             
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=353.50..353.60 rows=40 width=77) (actual time=0.531..0.532 rows=20.00 loops=1)
+   Sort Key: paper_question."position"
+   Sort Method: quicksort  Memory: 26kB
+   Buffers: shared hit=44 read=5 dirtied=1
+   ->  Hash Left Join  (cost=15.78..352.44 rows=40 width=77) (actual time=0.513..0.530 rows=20.00 loops=1)
+         Hash Cond: (paper_question.question_id = answer.question_id)
+         Buffers: shared hit=44 read=5 dirtied=1
+         ->  Hash Join  (cost=7.48..12.33 rows=40 width=34) (actual time=0.015..0.023 rows=20.00 loops=1)
+               Hash Cond: (question.question_id = paper_question.question_id)
+               Buffers: shared hit=6
+               ->  Seq Scan on questions question  (cost=0.00..4.20 rows=120 width=22) (actual time=0.002..0.005 rows=120.00 loops=1)
+                     Buffers: shared hit=3
+               ->  Hash  (cost=6.98..6.98 rows=40 width=20) (actual time=0.012..0.013 rows=20.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                     Buffers: shared hit=3
+                     ->  Hash Join  (cost=1.51..6.98 rows=40 width=20) (actual time=0.005..0.011 rows=20.00 loops=1)
+                           Hash Cond: (paper_question.test_id = attempt.test_id)
+                           Buffers: shared hit=3
+                           ->  Seq Scan on test_questions paper_question  (cost=0.00..4.40 rows=240 width=20) (actual time=0.001..0.004 rows=120.00 loops=1)
+                                 Buffers: shared hit=2
+                           ->  Hash  (cost=1.50..1.50 rows=1 width=16) (actual time=0.003..0.003 rows=1.00 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                 Buffers: shared hit=1
+                                 ->  Seq Scan on attempts attempt  (cost=0.00..1.50 rows=1 width=16) (actual time=0.001..0.002 rows=1.00 loops=1)
+                                       Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint))
+                                       Rows Removed by Filter: 32
+                                       Buffers: shared hit=1
+         ->  Hash  (cost=8.29..8.29 rows=1 width=34) (actual time=0.263..0.263 rows=0.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 8kB
+               Buffers: shared read=2
+               ->  Index Scan using answers_pkey on answers answer  (cost=0.28..8.29 rows=1 width=34) (actual time=0.263..0.263 rows=0.00 loops=1)
+                     Index Cond: (attempt_id = '1'::bigint)
+                     Index Searches: 1
+                     Buffers: shared read=2
+         SubPlan 1
+           ->  Index Only Scan using answer_options_pkey on answer_options selected  (cost=0.27..8.29 rows=1 width=2) (actual time=0.012..0.012 rows=0.00 loops=20)
+                 Index Cond: ((attempt_id = attempt.attempt_id) AND (question_id = paper_question.question_id))
+                 Heap Fetches: 1
+                 Index Searches: 20
+                 Buffers: shared hit=38 read=3 dirtied=1
+ Planning:
+   Buffers: shared hit=74 read=3
+ Planning Time: 0.425 ms
+ Execution Time: 0.545 ms
+(44 rows)
+
+
+
+===== RUN 2 =====
+                                                                             QUERY PLAN                                                                             
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=353.50..353.60 rows=40 width=77) (actual time=0.033..0.033 rows=20.00 loops=1)
+   Sort Key: paper_question."position"
+   Sort Method: quicksort  Memory: 26kB
+   Buffers: shared hit=48
+   ->  Hash Left Join  (cost=15.78..352.44 rows=40 width=77) (actual time=0.015..0.031 rows=20.00 loops=1)
+         Hash Cond: (paper_question.question_id = answer.question_id)
+         Buffers: shared hit=48
+         ->  Hash Join  (cost=7.48..12.33 rows=40 width=34) (actual time=0.013..0.020 rows=20.00 loops=1)
+               Hash Cond: (question.question_id = paper_question.question_id)
+               Buffers: shared hit=6
+               ->  Seq Scan on questions question  (cost=0.00..4.20 rows=120 width=22) (actual time=0.001..0.005 rows=120.00 loops=1)
+                     Buffers: shared hit=3
+               ->  Hash  (cost=6.98..6.98 rows=40 width=20) (actual time=0.011..0.011 rows=20.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                     Buffers: shared hit=3
+                     ->  Hash Join  (cost=1.51..6.98 rows=40 width=20) (actual time=0.004..0.010 rows=20.00 loops=1)
+                           Hash Cond: (paper_question.test_id = attempt.test_id)
+                           Buffers: shared hit=3
+                           ->  Seq Scan on test_questions paper_question  (cost=0.00..4.40 rows=240 width=20) (actual time=0.001..0.004 rows=120.00 loops=1)
+                                 Buffers: shared hit=2
+                           ->  Hash  (cost=1.50..1.50 rows=1 width=16) (actual time=0.002..0.002 rows=1.00 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                 Buffers: shared hit=1
+                                 ->  Seq Scan on attempts attempt  (cost=0.00..1.50 rows=1 width=16) (actual time=0.001..0.002 rows=1.00 loops=1)
+                                       Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint))
+                                       Rows Removed by Filter: 32
+                                       Buffers: shared hit=1
+         ->  Hash  (cost=8.29..8.29 rows=1 width=34) (actual time=0.001..0.001 rows=0.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 8kB
+               Buffers: shared hit=2
+               ->  Index Scan using answers_pkey on answers answer  (cost=0.28..8.29 rows=1 width=34) (actual time=0.001..0.001 rows=0.00 loops=1)
+                     Index Cond: (attempt_id = '1'::bigint)
+                     Index Searches: 1
+                     Buffers: shared hit=2
+         SubPlan 1
+           ->  Index Only Scan using answer_options_pkey on answer_options selected  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.000 rows=0.00 loops=20)
+                 Index Cond: ((attempt_id = attempt.attempt_id) AND (question_id = paper_question.question_id))
+                 Heap Fetches: 0
+                 Index Searches: 20
+                 Buffers: shared hit=40
+ Planning:
+   Buffers: shared hit=4
+ Planning Time: 0.085 ms
+ Execution Time: 0.041 ms
+(44 rows)
+
+
+
+===== RUN 3 =====
+                                                                             QUERY PLAN                                                                             
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=353.50..353.60 rows=40 width=77) (actual time=0.031..0.032 rows=20.00 loops=1)
+   Sort Key: paper_question."position"
+   Sort Method: quicksort  Memory: 26kB
+   Buffers: shared hit=48
+   ->  Hash Left Join  (cost=15.78..352.44 rows=40 width=77) (actual time=0.015..0.030 rows=20.00 loops=1)
+         Hash Cond: (paper_question.question_id = answer.question_id)
+         Buffers: shared hit=48
+         ->  Hash Join  (cost=7.48..12.33 rows=40 width=34) (actual time=0.013..0.020 rows=20.00 loops=1)
+               Hash Cond: (question.question_id = paper_question.question_id)
+               Buffers: shared hit=6
+               ->  Seq Scan on questions question  (cost=0.00..4.20 rows=120 width=22) (actual time=0.001..0.004 rows=120.00 loops=1)
+                     Buffers: shared hit=3
+               ->  Hash  (cost=6.98..6.98 rows=40 width=20) (actual time=0.011..0.011 rows=20.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                     Buffers: shared hit=3
+                     ->  Hash Join  (cost=1.51..6.98 rows=40 width=20) (actual time=0.004..0.010 rows=20.00 loops=1)
+                           Hash Cond: (paper_question.test_id = attempt.test_id)
+                           Buffers: shared hit=3
+                           ->  Seq Scan on test_questions paper_question  (cost=0.00..4.40 rows=240 width=20) (actual time=0.001..0.003 rows=120.00 loops=1)
+                                 Buffers: shared hit=2
+                           ->  Hash  (cost=1.50..1.50 rows=1 width=16) (actual time=0.002..0.002 rows=1.00 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                 Buffers: shared hit=1
+                                 ->  Seq Scan on attempts attempt  (cost=0.00..1.50 rows=1 width=16) (actual time=0.001..0.002 rows=1.00 loops=1)
+                                       Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint))
+                                       Rows Removed by Filter: 32
+                                       Buffers: shared hit=1
+         ->  Hash  (cost=8.29..8.29 rows=1 width=34) (actual time=0.001..0.001 rows=0.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 8kB
+               Buffers: shared hit=2
+               ->  Index Scan using answers_pkey on answers answer  (cost=0.28..8.29 rows=1 width=34) (actual time=0.001..0.001 rows=0.00 loops=1)
+                     Index Cond: (attempt_id = '1'::bigint)
+                     Index Searches: 1
+                     Buffers: shared hit=2
+         SubPlan 1
+           ->  Index Only Scan using answer_options_pkey on answer_options selected  (cost=0.27..8.29 rows=1 width=2) (actual time=0.000..0.000 rows=0.00 loops=20)
+                 Index Cond: ((attempt_id = attempt.attempt_id) AND (question_id = paper_question.question_id))
+                 Heap Fetches: 0
+                 Index Searches: 20
+                 Buffers: shared hit=40
+ Planning:
+   Buffers: shared hit=4
+ Planning Time: 0.076 ms
+ Execution Time: 0.039 ms
+(44 rows)
+

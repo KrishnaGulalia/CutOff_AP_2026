@@ -1,0 +1,77 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                           QUERY PLAN                                                            
+---------------------------------------------------------------------------------------------------------------------------------
+ LockRows  (cost=1.59..2.71 rows=1 width=45) (actual time=0.029..0.031 rows=1.00 loops=1)
+   Buffers: shared hit=3 dirtied=1
+   ->  Hash Join  (cost=1.59..2.70 rows=1 width=45) (actual time=0.008..0.009 rows=1.00 loops=1)
+         Hash Cond: (paper.test_id = attempt.test_id)
+         Buffers: shared hit=2
+         ->  Seq Scan on tests paper  (cost=0.00..1.06 rows=6 width=18) (actual time=0.002..0.002 rows=6.00 loops=1)
+               Buffers: shared hit=1
+         ->  Hash  (cost=1.58..1.58 rows=1 width=30) (actual time=0.004..0.004 rows=1.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=30) (actual time=0.002..0.003 rows=1.00 loops=1)
+                     Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+                     Rows Removed by Filter: 32
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=4
+ Planning Time: 0.190 ms
+ Execution Time: 0.039 ms
+(18 rows)
+
+
+
+===== RUN 2 =====
+                                                           QUERY PLAN                                                            
+---------------------------------------------------------------------------------------------------------------------------------
+ LockRows  (cost=1.59..2.71 rows=1 width=45) (actual time=0.011..0.012 rows=1.00 loops=1)
+   Buffers: shared hit=3
+   ->  Hash Join  (cost=1.59..2.70 rows=1 width=45) (actual time=0.006..0.007 rows=1.00 loops=1)
+         Hash Cond: (paper.test_id = attempt.test_id)
+         Buffers: shared hit=2
+         ->  Seq Scan on tests paper  (cost=0.00..1.06 rows=6 width=18) (actual time=0.001..0.002 rows=6.00 loops=1)
+               Buffers: shared hit=1
+         ->  Hash  (cost=1.58..1.58 rows=1 width=30) (actual time=0.003..0.003 rows=1.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=30) (actual time=0.002..0.003 rows=1.00 loops=1)
+                     Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+                     Rows Removed by Filter: 32
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=4
+ Planning Time: 0.040 ms
+ Execution Time: 0.018 ms
+(18 rows)
+
+
+
+===== RUN 3 =====
+                                                           QUERY PLAN                                                            
+---------------------------------------------------------------------------------------------------------------------------------
+ LockRows  (cost=1.59..2.71 rows=1 width=45) (actual time=0.010..0.011 rows=1.00 loops=1)
+   Buffers: shared hit=3
+   ->  Hash Join  (cost=1.59..2.70 rows=1 width=45) (actual time=0.005..0.006 rows=1.00 loops=1)
+         Hash Cond: (paper.test_id = attempt.test_id)
+         Buffers: shared hit=2
+         ->  Seq Scan on tests paper  (cost=0.00..1.06 rows=6 width=18) (actual time=0.001..0.002 rows=6.00 loops=1)
+               Buffers: shared hit=1
+         ->  Hash  (cost=1.58..1.58 rows=1 width=30) (actual time=0.003..0.003 rows=1.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=30) (actual time=0.001..0.002 rows=1.00 loops=1)
+                     Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+                     Rows Removed by Filter: 32
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=4
+ Planning Time: 0.030 ms
+ Execution Time: 0.015 ms
+(18 rows)
+

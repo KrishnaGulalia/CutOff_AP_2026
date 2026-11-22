@@ -1,0 +1,43 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                            QUERY PLAN                                             
+---------------------------------------------------------------------------------------------------
+ Seq Scan on users  (cost=0.00..1.25 rows=1 width=56) (actual time=0.002..0.002 rows=1.00 loops=1)
+   Filter: (user_id = '1'::bigint)
+   Rows Removed by Filter: 19
+   Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=12
+ Planning Time: 0.014 ms
+ Execution Time: 0.003 ms
+(8 rows)
+
+
+
+===== RUN 2 =====
+                                            QUERY PLAN                                             
+---------------------------------------------------------------------------------------------------
+ Seq Scan on users  (cost=0.00..1.25 rows=1 width=56) (actual time=0.001..0.002 rows=1.00 loops=1)
+   Filter: (user_id = '1'::bigint)
+   Rows Removed by Filter: 19
+   Buffers: shared hit=1
+ Planning Time: 0.007 ms
+ Execution Time: 0.003 ms
+(6 rows)
+
+
+
+===== RUN 3 =====
+                                            QUERY PLAN                                             
+---------------------------------------------------------------------------------------------------
+ Seq Scan on users  (cost=0.00..1.25 rows=1 width=56) (actual time=0.001..0.001 rows=1.00 loops=1)
+   Filter: (user_id = '1'::bigint)
+   Rows Removed by Filter: 19
+   Buffers: shared hit=1
+ Planning Time: 0.007 ms
+ Execution Time: 0.002 ms
+(6 rows)
+

@@ -1,0 +1,71 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                        QUERY PLAN                                                        
+--------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=1.51..2.62 rows=1 width=76) (actual time=0.028..0.029 rows=1.00 loops=1)
+   Hash Cond: (paper.test_id = attempt.test_id)
+   Buffers: shared hit=2
+   ->  Seq Scan on tests paper  (cost=0.00..1.06 rows=6 width=38) (actual time=0.001..0.001 rows=6.00 loops=1)
+         Buffers: shared hit=1
+   ->  Hash  (cost=1.50..1.50 rows=1 width=42) (actual time=0.003..0.003 rows=1.00 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+         Buffers: shared hit=1
+         ->  Seq Scan on attempts attempt  (cost=0.00..1.50 rows=1 width=42) (actual time=0.001..0.003 rows=1.00 loops=1)
+               Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint))
+               Rows Removed by Filter: 32
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=7
+ Planning Time: 0.030 ms
+ Execution Time: 0.033 ms
+(16 rows)
+
+
+
+===== RUN 2 =====
+                                                        QUERY PLAN                                                        
+--------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=1.51..2.62 rows=1 width=76) (actual time=0.005..0.006 rows=1.00 loops=1)
+   Hash Cond: (paper.test_id = attempt.test_id)
+   Buffers: shared hit=2
+   ->  Seq Scan on tests paper  (cost=0.00..1.06 rows=6 width=38) (actual time=0.001..0.001 rows=6.00 loops=1)
+         Buffers: shared hit=1
+   ->  Hash  (cost=1.50..1.50 rows=1 width=42) (actual time=0.003..0.003 rows=1.00 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+         Buffers: shared hit=1
+         ->  Seq Scan on attempts attempt  (cost=0.00..1.50 rows=1 width=42) (actual time=0.001..0.002 rows=1.00 loops=1)
+               Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint))
+               Rows Removed by Filter: 32
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=4
+ Planning Time: 0.024 ms
+ Execution Time: 0.009 ms
+(16 rows)
+
+
+
+===== RUN 3 =====
+                                                        QUERY PLAN                                                        
+--------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=1.51..2.62 rows=1 width=76) (actual time=0.005..0.005 rows=1.00 loops=1)
+   Hash Cond: (paper.test_id = attempt.test_id)
+   Buffers: shared hit=2
+   ->  Seq Scan on tests paper  (cost=0.00..1.06 rows=6 width=38) (actual time=0.001..0.001 rows=6.00 loops=1)
+         Buffers: shared hit=1
+   ->  Hash  (cost=1.50..1.50 rows=1 width=42) (actual time=0.003..0.003 rows=1.00 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+         Buffers: shared hit=1
+         ->  Seq Scan on attempts attempt  (cost=0.00..1.50 rows=1 width=42) (actual time=0.001..0.002 rows=1.00 loops=1)
+               Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint))
+               Rows Removed by Filter: 32
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=4
+ Planning Time: 0.022 ms
+ Execution Time: 0.008 ms
+(16 rows)
+

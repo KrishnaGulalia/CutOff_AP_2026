@@ -1,0 +1,44 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                QUERY PLAN                                                 
+-----------------------------------------------------------------------------------------------------------
+ Insert on test_questions  (cost=0.00..0.01 rows=1 width=116) (actual time=0.542..0.542 rows=1.00 loops=1)
+   Buffers: shared hit=12 read=3 dirtied=3
+   ->  Result  (cost=0.00..0.01 rows=1 width=116) (actual time=0.000..0.000 rows=1.00 loops=1)
+ Planning Time: 0.009 ms
+ Trigger for constraint test_questions_test_id_fkey: time=0.020 calls=1
+ Trigger for constraint test_questions_question_id_fkey: time=0.016 calls=1
+ Execution Time: 0.581 ms
+(7 rows)
+
+
+
+===== RUN 2 =====
+                                                QUERY PLAN                                                 
+-----------------------------------------------------------------------------------------------------------
+ Insert on test_questions  (cost=0.00..0.01 rows=1 width=116) (actual time=0.014..0.014 rows=1.00 loops=1)
+   Buffers: shared hit=5
+   ->  Result  (cost=0.00..0.01 rows=1 width=116) (actual time=0.000..0.000 rows=1.00 loops=1)
+ Planning Time: 0.009 ms
+ Trigger for constraint test_questions_test_id_fkey: time=0.010 calls=1
+ Trigger for constraint test_questions_question_id_fkey: time=0.008 calls=1
+ Execution Time: 0.036 ms
+(7 rows)
+
+
+
+===== RUN 3 =====
+                                                QUERY PLAN                                                 
+-----------------------------------------------------------------------------------------------------------
+ Insert on test_questions  (cost=0.00..0.01 rows=1 width=116) (actual time=0.012..0.012 rows=1.00 loops=1)
+   Buffers: shared hit=5
+   ->  Result  (cost=0.00..0.01 rows=1 width=116) (actual time=0.000..0.000 rows=1.00 loops=1)
+ Planning Time: 0.007 ms
+ Trigger for constraint test_questions_test_id_fkey: time=0.009 calls=1
+ Trigger for constraint test_questions_question_id_fkey: time=0.008 calls=1
+ Execution Time: 0.031 ms
+(7 rows)
+

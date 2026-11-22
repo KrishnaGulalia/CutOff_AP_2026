@@ -1,0 +1,71 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Update on attempts attempt  (cost=0.00..2.68 rows=1 width=52) (actual time=0.015..0.016 rows=1.00 loops=1)
+   Buffers: shared hit=9
+   ->  Nested Loop  (cost=0.00..2.68 rows=1 width=52) (actual time=0.004..0.005 rows=1.00 loops=1)
+         Join Filter: (clock_timestamp() >= (attempt.started_at + ((paper.duration_minutes)::double precision * '00:01:00'::interval)))
+         Buffers: shared hit=2
+         ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=22) (actual time=0.002..0.003 rows=1.00 loops=1)
+               Filter: ((test_id = '2'::bigint) AND (user_id = '3'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+               Rows Removed by Filter: 32
+               Buffers: shared hit=1
+         ->  Seq Scan on tests paper  (cost=0.00..1.07 rows=1 width=18) (actual time=0.001..0.001 rows=1.00 loops=1)
+               Filter: (test_id = '2'::bigint)
+               Rows Removed by Filter: 1
+               Buffers: shared hit=1
+ Planning Time: 0.025 ms
+ Trigger attempts_guard: time=0.002 calls=1
+ Execution Time: 0.020 ms
+(16 rows)
+
+
+
+===== RUN 2 =====
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Update on attempts attempt  (cost=0.00..2.68 rows=1 width=52) (actual time=0.017..0.018 rows=1.00 loops=1)
+   Buffers: shared hit=9
+   ->  Nested Loop  (cost=0.00..2.68 rows=1 width=52) (actual time=0.003..0.004 rows=1.00 loops=1)
+         Join Filter: (clock_timestamp() >= (attempt.started_at + ((paper.duration_minutes)::double precision * '00:01:00'::interval)))
+         Buffers: shared hit=2
+         ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=22) (actual time=0.002..0.003 rows=1.00 loops=1)
+               Filter: ((test_id = '2'::bigint) AND (user_id = '3'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+               Rows Removed by Filter: 32
+               Buffers: shared hit=1
+         ->  Seq Scan on tests paper  (cost=0.00..1.07 rows=1 width=18) (actual time=0.001..0.001 rows=1.00 loops=1)
+               Filter: (test_id = '2'::bigint)
+               Rows Removed by Filter: 1
+               Buffers: shared hit=1
+ Planning Time: 0.023 ms
+ Trigger attempts_guard: time=0.002 calls=1
+ Execution Time: 0.021 ms
+(16 rows)
+
+
+
+===== RUN 3 =====
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Update on attempts attempt  (cost=0.00..2.68 rows=1 width=52) (actual time=0.013..0.014 rows=1.00 loops=1)
+   Buffers: shared hit=9
+   ->  Nested Loop  (cost=0.00..2.68 rows=1 width=52) (actual time=0.003..0.004 rows=1.00 loops=1)
+         Join Filter: (clock_timestamp() >= (attempt.started_at + ((paper.duration_minutes)::double precision * '00:01:00'::interval)))
+         Buffers: shared hit=2
+         ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=22) (actual time=0.001..0.002 rows=1.00 loops=1)
+               Filter: ((test_id = '2'::bigint) AND (user_id = '3'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+               Rows Removed by Filter: 32
+               Buffers: shared hit=1
+         ->  Seq Scan on tests paper  (cost=0.00..1.07 rows=1 width=18) (actual time=0.001..0.001 rows=1.00 loops=1)
+               Filter: (test_id = '2'::bigint)
+               Rows Removed by Filter: 1
+               Buffers: shared hit=1
+ Planning Time: 0.017 ms
+ Trigger attempts_guard: time=0.002 calls=1
+ Execution Time: 0.016 ms
+(16 rows)
+

@@ -1,0 +1,97 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                              QUERY PLAN                                                              
+--------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=3.67..3.70 rows=12 width=52) (actual time=0.024..0.024 rows=12.00 loops=1)
+   Sort Key: subject.subject_name, chapter.chapter_name, topic.topic_name
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=3
+   ->  Hash Right Join  (cost=2.20..3.45 rows=12 width=52) (actual time=0.008..0.014 rows=12.00 loops=1)
+         Hash Cond: (chapter.subject_id = subject.subject_id)
+         Buffers: shared hit=3
+         ->  Hash Right Join  (cost=1.14..2.31 rows=12 width=42) (actual time=0.005..0.008 rows=12.00 loops=1)
+               Hash Cond: (topic.chapter_id = chapter.chapter_id)
+               Buffers: shared hit=2
+               ->  Seq Scan on topics topic  (cost=0.00..1.12 rows=12 width=24) (actual time=0.002..0.002 rows=12.00 loops=1)
+                     Buffers: shared hit=1
+               ->  Hash  (cost=1.06..1.06 rows=6 width=26) (actual time=0.002..0.002 rows=6.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on chapters chapter  (cost=0.00..1.06 rows=6 width=26) (actual time=0.001..0.001 rows=6.00 loops=1)
+                           Buffers: shared hit=1
+         ->  Hash  (cost=1.03..1.03 rows=3 width=18) (actual time=0.002..0.002 rows=3.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on subjects subject  (cost=0.00..1.03 rows=3 width=18) (actual time=0.001..0.002 rows=3.00 loops=1)
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=11
+ Planning Time: 0.074 ms
+ Execution Time: 0.031 ms
+(26 rows)
+
+
+
+===== RUN 2 =====
+                                                              QUERY PLAN                                                              
+--------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=3.67..3.70 rows=12 width=52) (actual time=0.021..0.022 rows=12.00 loops=1)
+   Sort Key: subject.subject_name, chapter.chapter_name, topic.topic_name
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=3
+   ->  Hash Right Join  (cost=2.20..3.45 rows=12 width=52) (actual time=0.008..0.014 rows=12.00 loops=1)
+         Hash Cond: (chapter.subject_id = subject.subject_id)
+         Buffers: shared hit=3
+         ->  Hash Right Join  (cost=1.14..2.31 rows=12 width=42) (actual time=0.004..0.008 rows=12.00 loops=1)
+               Hash Cond: (topic.chapter_id = chapter.chapter_id)
+               Buffers: shared hit=2
+               ->  Seq Scan on topics topic  (cost=0.00..1.12 rows=12 width=24) (actual time=0.001..0.001 rows=12.00 loops=1)
+                     Buffers: shared hit=1
+               ->  Hash  (cost=1.06..1.06 rows=6 width=26) (actual time=0.002..0.002 rows=6.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on chapters chapter  (cost=0.00..1.06 rows=6 width=26) (actual time=0.001..0.001 rows=6.00 loops=1)
+                           Buffers: shared hit=1
+         ->  Hash  (cost=1.03..1.03 rows=3 width=18) (actual time=0.003..0.003 rows=3.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on subjects subject  (cost=0.00..1.03 rows=3 width=18) (actual time=0.002..0.002 rows=3.00 loops=1)
+                     Buffers: shared hit=1
+ Planning Time: 0.001 ms
+ Execution Time: 0.028 ms
+(24 rows)
+
+
+
+===== RUN 3 =====
+                                                              QUERY PLAN                                                              
+--------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=3.67..3.70 rows=12 width=52) (actual time=0.016..0.016 rows=12.00 loops=1)
+   Sort Key: subject.subject_name, chapter.chapter_name, topic.topic_name
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=3
+   ->  Hash Right Join  (cost=2.20..3.45 rows=12 width=52) (actual time=0.005..0.011 rows=12.00 loops=1)
+         Hash Cond: (chapter.subject_id = subject.subject_id)
+         Buffers: shared hit=3
+         ->  Hash Right Join  (cost=1.14..2.31 rows=12 width=42) (actual time=0.003..0.006 rows=12.00 loops=1)
+               Hash Cond: (topic.chapter_id = chapter.chapter_id)
+               Buffers: shared hit=2
+               ->  Seq Scan on topics topic  (cost=0.00..1.12 rows=12 width=24) (actual time=0.001..0.001 rows=12.00 loops=1)
+                     Buffers: shared hit=1
+               ->  Hash  (cost=1.06..1.06 rows=6 width=26) (actual time=0.001..0.002 rows=6.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on chapters chapter  (cost=0.00..1.06 rows=6 width=26) (actual time=0.001..0.001 rows=6.00 loops=1)
+                           Buffers: shared hit=1
+         ->  Hash  (cost=1.03..1.03 rows=3 width=18) (actual time=0.002..0.002 rows=3.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on subjects subject  (cost=0.00..1.03 rows=3 width=18) (actual time=0.001..0.001 rows=3.00 loops=1)
+                     Buffers: shared hit=1
+ Planning Time: 0.001 ms
+ Execution Time: 0.021 ms
+(24 rows)
+

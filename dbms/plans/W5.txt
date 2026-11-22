@@ -1,0 +1,107 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                                             QUERY PLAN                                                                             
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Insert on answer_options  (cost=5.92..5.93 rows=1 width=48) (actual time=0.083..0.084 rows=1.00 loops=1)
+   Buffers: shared hit=17
+   ->  Unique  (cost=5.92..5.93 rows=1 width=48) (actual time=0.033..0.033 rows=1.00 loops=1)
+         Buffers: shared hit=5
+         ->  Sort  (cost=5.92..5.92 rows=1 width=48) (actual time=0.033..0.033 rows=1.00 loops=1)
+               Sort Key: (upper(TRIM(BOTH FROM selection.option_label)))
+               Sort Method: quicksort  Memory: 25kB
+               Buffers: shared hit=5
+               ->  Nested Loop  (cost=0.28..5.91 rows=1 width=48) (actual time=0.017..0.019 rows=1.00 loops=1)
+                     Buffers: shared hit=5
+                     ->  Nested Loop  (cost=0.28..5.88 rows=1 width=16) (actual time=0.004..0.005 rows=1.00 loops=1)
+                           Buffers: shared hit=5
+                           ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=8) (actual time=0.002..0.003 rows=1.00 loops=1)
+                                 Filter: ((attempt_id = '1'::bigint) AND (user_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+                                 Rows Removed by Filter: 32
+                                 Buffers: shared hit=1
+                           ->  Index Only Scan using answers_pkey on answers answer  (cost=0.28..4.29 rows=1 width=16) (actual time=0.002..0.002 rows=1.00 loops=1)
+                                 Index Cond: ((attempt_id = '1'::bigint) AND (question_id = '1'::bigint))
+                                 Heap Fetches: 1
+                                 Index Searches: 1
+                                 Buffers: shared hit=4
+                     ->  Function Scan on unnest selection  (cost=0.00..0.01 rows=1 width=32) (actual time=0.002..0.002 rows=1.00 loops=1)
+ Planning Time: 0.066 ms
+ Trigger for constraint answer_options_attempt_id_question_id_fkey: time=0.011 calls=1
+ Trigger for constraint answer_options_question_id_option_label_fkey: time=0.010 calls=1
+ Trigger answer_options_guard: time=0.048 calls=1
+ Trigger answer_options_touch: time=0.055 calls=1
+ Execution Time: 0.169 ms
+(28 rows)
+
+
+
+===== RUN 2 =====
+                                                                             QUERY PLAN                                                                             
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Insert on answer_options  (cost=5.92..5.93 rows=1 width=48) (actual time=0.056..0.057 rows=1.00 loops=1)
+   Buffers: shared hit=17
+   ->  Unique  (cost=5.92..5.93 rows=1 width=48) (actual time=0.010..0.010 rows=1.00 loops=1)
+         Buffers: shared hit=5
+         ->  Sort  (cost=5.92..5.92 rows=1 width=48) (actual time=0.010..0.010 rows=1.00 loops=1)
+               Sort Key: (upper(TRIM(BOTH FROM selection.option_label)))
+               Sort Method: quicksort  Memory: 25kB
+               Buffers: shared hit=5
+               ->  Nested Loop  (cost=0.28..5.91 rows=1 width=48) (actual time=0.006..0.008 rows=1.00 loops=1)
+                     Buffers: shared hit=5
+                     ->  Nested Loop  (cost=0.28..5.88 rows=1 width=16) (actual time=0.003..0.005 rows=1.00 loops=1)
+                           Buffers: shared hit=5
+                           ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=8) (actual time=0.002..0.003 rows=1.00 loops=1)
+                                 Filter: ((attempt_id = '1'::bigint) AND (user_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+                                 Rows Removed by Filter: 32
+                                 Buffers: shared hit=1
+                           ->  Index Only Scan using answers_pkey on answers answer  (cost=0.28..4.29 rows=1 width=16) (actual time=0.001..0.001 rows=1.00 loops=1)
+                                 Index Cond: ((attempt_id = '1'::bigint) AND (question_id = '1'::bigint))
+                                 Heap Fetches: 1
+                                 Index Searches: 1
+                                 Buffers: shared hit=4
+                     ->  Function Scan on unnest selection  (cost=0.00..0.01 rows=1 width=32) (actual time=0.001..0.001 rows=1.00 loops=1)
+ Planning Time: 0.046 ms
+ Trigger for constraint answer_options_attempt_id_question_id_fkey: time=0.010 calls=1
+ Trigger for constraint answer_options_question_id_option_label_fkey: time=0.009 calls=1
+ Trigger answer_options_guard: time=0.043 calls=1
+ Trigger answer_options_touch: time=0.047 calls=1
+ Execution Time: 0.130 ms
+(28 rows)
+
+
+
+===== RUN 3 =====
+                                                                             QUERY PLAN                                                                             
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Insert on answer_options  (cost=5.92..5.93 rows=1 width=48) (actual time=0.067..0.067 rows=1.00 loops=1)
+   Buffers: shared hit=19
+   ->  Unique  (cost=5.92..5.93 rows=1 width=48) (actual time=0.006..0.007 rows=1.00 loops=1)
+         Buffers: shared hit=5
+         ->  Sort  (cost=5.92..5.92 rows=1 width=48) (actual time=0.006..0.007 rows=1.00 loops=1)
+               Sort Key: (upper(TRIM(BOTH FROM selection.option_label)))
+               Sort Method: quicksort  Memory: 25kB
+               Buffers: shared hit=5
+               ->  Nested Loop  (cost=0.28..5.91 rows=1 width=48) (actual time=0.004..0.006 rows=1.00 loops=1)
+                     Buffers: shared hit=5
+                     ->  Nested Loop  (cost=0.28..5.88 rows=1 width=16) (actual time=0.003..0.004 rows=1.00 loops=1)
+                           Buffers: shared hit=5
+                           ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=8) (actual time=0.001..0.003 rows=1.00 loops=1)
+                                 Filter: ((attempt_id = '1'::bigint) AND (user_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+                                 Rows Removed by Filter: 32
+                                 Buffers: shared hit=1
+                           ->  Index Only Scan using answers_pkey on answers answer  (cost=0.28..4.29 rows=1 width=16) (actual time=0.001..0.001 rows=1.00 loops=1)
+                                 Index Cond: ((attempt_id = '1'::bigint) AND (question_id = '1'::bigint))
+                                 Heap Fetches: 1
+                                 Index Searches: 1
+                                 Buffers: shared hit=4
+                     ->  Function Scan on unnest selection  (cost=0.00..0.01 rows=1 width=32) (actual time=0.001..0.001 rows=1.00 loops=1)
+ Planning Time: 0.036 ms
+ Trigger for constraint answer_options_attempt_id_question_id_fkey: time=0.012 calls=1
+ Trigger for constraint answer_options_question_id_option_label_fkey: time=0.008 calls=1
+ Trigger answer_options_guard: time=0.058 calls=1
+ Trigger answer_options_touch: time=0.059 calls=1
+ Execution Time: 0.152 ms
+(28 rows)
+

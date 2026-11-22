@@ -1,0 +1,116 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                                        QUERY PLAN                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=18.09..20.01 rows=64 width=71) (actual time=0.356..0.377 rows=64.00 loops=1)
+   Group Key: paper_question."position", option.option_label, paper_question.question_id, option.option_text
+   Buffers: shared hit=3 read=4 dirtied=1
+   ->  Sort  (cost=18.09..18.25 rows=64 width=80) (actual time=0.337..0.338 rows=64.00 loops=1)
+         Sort Key: paper_question."position", option.option_label, paper_question.question_id, option.option_text
+         Sort Method: quicksort  Memory: 28kB
+         Buffers: shared hit=3 read=4 dirtied=1
+         ->  Hash Left Join  (cost=6.80..16.17 rows=64 width=80) (actual time=0.182..0.328 rows=64.00 loops=1)
+               Hash Cond: ((option.question_id = option_image.question_id) AND (option.option_label = option_image.option_label))
+               Buffers: shared hit=3 read=4 dirtied=1
+               ->  Hash Join  (cost=5.50..14.37 rows=64 width=47) (actual time=0.178..0.321 rows=64.00 loops=1)
+                     Hash Cond: (option.question_id = paper_question.question_id)
+                     Buffers: shared hit=2 read=4 dirtied=1
+                     ->  Seq Scan on question_options option  (cost=0.00..7.84 rows=384 width=35) (actual time=0.171..0.301 rows=384.00 loops=1)
+                           Buffers: shared read=4 dirtied=1
+                     ->  Hash  (cost=5.00..5.00 rows=40 width=12) (actual time=0.006..0.006 rows=20.00 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                           Buffers: shared hit=2
+                           ->  Seq Scan on test_questions paper_question  (cost=0.00..5.00 rows=40 width=12) (actual time=0.002..0.005 rows=20.00 loops=1)
+                                 Filter: (test_id = '1'::bigint)
+                                 Rows Removed by Filter: 100
+                                 Buffers: shared hit=2
+               ->  Hash  (cost=1.12..1.12 rows=12 width=51) (actual time=0.003..0.003 rows=12.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on option_images option_image  (cost=0.00..1.12 rows=12 width=51) (actual time=0.001..0.001 rows=12.00 loops=1)
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=82 read=5 dirtied=2
+ Planning Time: 0.726 ms
+ Execution Time: 0.387 ms
+(31 rows)
+
+
+
+===== RUN 2 =====
+                                                                        QUERY PLAN                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=18.09..20.01 rows=64 width=71) (actual time=0.045..0.066 rows=64.00 loops=1)
+   Group Key: paper_question."position", option.option_label, paper_question.question_id, option.option_text
+   Buffers: shared hit=7
+   ->  Sort  (cost=18.09..18.25 rows=64 width=80) (actual time=0.042..0.043 rows=64.00 loops=1)
+         Sort Key: paper_question."position", option.option_label, paper_question.question_id, option.option_text
+         Sort Method: quicksort  Memory: 28kB
+         Buffers: shared hit=7
+         ->  Hash Left Join  (cost=6.80..16.17 rows=64 width=80) (actual time=0.011..0.035 rows=64.00 loops=1)
+               Hash Cond: ((option.question_id = option_image.question_id) AND (option.option_label = option_image.option_label))
+               Buffers: shared hit=7
+               ->  Hash Join  (cost=5.50..14.37 rows=64 width=47) (actual time=0.008..0.029 rows=64.00 loops=1)
+                     Hash Cond: (option.question_id = paper_question.question_id)
+                     Buffers: shared hit=6
+                     ->  Seq Scan on question_options option  (cost=0.00..7.84 rows=384 width=35) (actual time=0.001..0.010 rows=384.00 loops=1)
+                           Buffers: shared hit=4
+                     ->  Hash  (cost=5.00..5.00 rows=40 width=12) (actual time=0.005..0.005 rows=20.00 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                           Buffers: shared hit=2
+                           ->  Seq Scan on test_questions paper_question  (cost=0.00..5.00 rows=40 width=12) (actual time=0.001..0.004 rows=20.00 loops=1)
+                                 Filter: (test_id = '1'::bigint)
+                                 Rows Removed by Filter: 100
+                                 Buffers: shared hit=2
+               ->  Hash  (cost=1.12..1.12 rows=12 width=51) (actual time=0.003..0.003 rows=12.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on option_images option_image  (cost=0.00..1.12 rows=12 width=51) (actual time=0.001..0.001 rows=12.00 loops=1)
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=4
+ Planning Time: 0.070 ms
+ Execution Time: 0.075 ms
+(31 rows)
+
+
+
+===== RUN 3 =====
+                                                                        QUERY PLAN                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=18.09..20.01 rows=64 width=71) (actual time=0.043..0.063 rows=64.00 loops=1)
+   Group Key: paper_question."position", option.option_label, paper_question.question_id, option.option_text
+   Buffers: shared hit=7
+   ->  Sort  (cost=18.09..18.25 rows=64 width=80) (actual time=0.040..0.042 rows=64.00 loops=1)
+         Sort Key: paper_question."position", option.option_label, paper_question.question_id, option.option_text
+         Sort Method: quicksort  Memory: 28kB
+         Buffers: shared hit=7
+         ->  Hash Left Join  (cost=6.80..16.17 rows=64 width=80) (actual time=0.010..0.034 rows=64.00 loops=1)
+               Hash Cond: ((option.question_id = option_image.question_id) AND (option.option_label = option_image.option_label))
+               Buffers: shared hit=7
+               ->  Hash Join  (cost=5.50..14.37 rows=64 width=47) (actual time=0.007..0.028 rows=64.00 loops=1)
+                     Hash Cond: (option.question_id = paper_question.question_id)
+                     Buffers: shared hit=6
+                     ->  Seq Scan on question_options option  (cost=0.00..7.84 rows=384 width=35) (actual time=0.001..0.009 rows=384.00 loops=1)
+                           Buffers: shared hit=4
+                     ->  Hash  (cost=5.00..5.00 rows=40 width=12) (actual time=0.005..0.005 rows=20.00 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                           Buffers: shared hit=2
+                           ->  Seq Scan on test_questions paper_question  (cost=0.00..5.00 rows=40 width=12) (actual time=0.001..0.004 rows=20.00 loops=1)
+                                 Filter: (test_id = '1'::bigint)
+                                 Rows Removed by Filter: 100
+                                 Buffers: shared hit=2
+               ->  Hash  (cost=1.12..1.12 rows=12 width=51) (actual time=0.002..0.002 rows=12.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on option_images option_image  (cost=0.00..1.12 rows=12 width=51) (actual time=0.001..0.001 rows=12.00 loops=1)
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=4
+ Planning Time: 0.057 ms
+ Execution Time: 0.071 ms
+(31 rows)
+

@@ -1,0 +1,106 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                              QUERY PLAN                                                               
+---------------------------------------------------------------------------------------------------------------------------------------
+ Insert on attempts  (cost=0.00..7.36 rows=1 width=72) (actual time=7.318..7.320 rows=1.00 loops=1)
+   Conflict Resolution: NOTHING
+   Conflict Arbiter Indexes: attempts_one_active_per_user_test
+   Tuples Inserted: 1
+   Conflicting Tuples: 0
+   Buffers: shared hit=26 read=10 dirtied=2
+   ->  Nested Loop Semi Join  (cost=0.00..7.36 rows=1 width=72) (actual time=0.220..0.222 rows=1.00 loops=1)
+         Buffers: shared hit=14 read=1 dirtied=1
+         ->  Nested Loop  (cost=0.00..2.33 rows=1 width=16) (actual time=0.008..0.010 rows=1.00 loops=1)
+               Buffers: shared hit=2
+               ->  Seq Scan on users student  (cost=0.00..1.25 rows=1 width=8) (actual time=0.006..0.006 rows=1.00 loops=1)
+                     Filter: (user_id = '20'::bigint)
+                     Rows Removed by Filter: 19
+                     Buffers: shared hit=1
+               ->  Seq Scan on tests paper  (cost=0.00..1.07 rows=1 width=8) (actual time=0.001..0.002 rows=1.00 loops=1)
+                     Filter: (test_id = '2'::bigint)
+                     Rows Removed by Filter: 5
+                     Buffers: shared hit=1
+         ->  Seq Scan on test_questions paper_question  (cost=0.00..5.00 rows=40 width=8) (actual time=0.006..0.006 rows=1.00 loops=1)
+               Filter: (test_id = '2'::bigint)
+               Rows Removed by Filter: 1
+               Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=3
+ Planning Time: 0.064 ms
+ Trigger for constraint attempts_user_id_fkey: time=0.377 calls=1
+ Trigger for constraint attempts_test_id_fkey: time=0.017 calls=1
+ Trigger attempts_guard: time=6.803 calls=1
+ Execution Time: 7.724 ms
+(29 rows)
+
+
+
+===== RUN 2 =====
+                                                              QUERY PLAN                                                               
+---------------------------------------------------------------------------------------------------------------------------------------
+ Insert on attempts  (cost=0.00..7.36 rows=1 width=72) (actual time=0.027..0.028 rows=1.00 loops=1)
+   Conflict Resolution: NOTHING
+   Conflict Arbiter Indexes: attempts_one_active_per_user_test
+   Tuples Inserted: 1
+   Conflicting Tuples: 0
+   Buffers: shared hit=11
+   ->  Nested Loop Semi Join  (cost=0.00..7.36 rows=1 width=72) (actual time=0.007..0.007 rows=1.00 loops=1)
+         Buffers: shared hit=5
+         ->  Nested Loop  (cost=0.00..2.33 rows=1 width=16) (actual time=0.004..0.004 rows=1.00 loops=1)
+               Buffers: shared hit=2
+               ->  Seq Scan on users student  (cost=0.00..1.25 rows=1 width=8) (actual time=0.002..0.002 rows=1.00 loops=1)
+                     Filter: (user_id = '20'::bigint)
+                     Rows Removed by Filter: 19
+                     Buffers: shared hit=1
+               ->  Seq Scan on tests paper  (cost=0.00..1.07 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=1)
+                     Filter: (test_id = '2'::bigint)
+                     Rows Removed by Filter: 5
+                     Buffers: shared hit=1
+         ->  Seq Scan on test_questions paper_question  (cost=0.00..5.00 rows=40 width=8) (actual time=0.001..0.001 rows=1.00 loops=1)
+               Filter: (test_id = '2'::bigint)
+               Rows Removed by Filter: 1
+               Buffers: shared hit=2
+ Planning Time: 0.051 ms
+ Trigger for constraint attempts_user_id_fkey: time=0.016 calls=1
+ Trigger for constraint attempts_test_id_fkey: time=0.009 calls=1
+ Trigger attempts_guard: time=0.005 calls=1
+ Execution Time: 0.061 ms
+(27 rows)
+
+
+
+===== RUN 3 =====
+                                                              QUERY PLAN                                                               
+---------------------------------------------------------------------------------------------------------------------------------------
+ Insert on attempts  (cost=0.00..7.36 rows=1 width=72) (actual time=0.030..0.031 rows=1.00 loops=1)
+   Conflict Resolution: NOTHING
+   Conflict Arbiter Indexes: attempts_one_active_per_user_test
+   Tuples Inserted: 1
+   Conflicting Tuples: 0
+   Buffers: shared hit=11
+   ->  Nested Loop Semi Join  (cost=0.00..7.36 rows=1 width=72) (actual time=0.005..0.006 rows=1.00 loops=1)
+         Buffers: shared hit=5
+         ->  Nested Loop  (cost=0.00..2.33 rows=1 width=16) (actual time=0.003..0.004 rows=1.00 loops=1)
+               Buffers: shared hit=2
+               ->  Seq Scan on users student  (cost=0.00..1.25 rows=1 width=8) (actual time=0.002..0.002 rows=1.00 loops=1)
+                     Filter: (user_id = '20'::bigint)
+                     Rows Removed by Filter: 19
+                     Buffers: shared hit=1
+               ->  Seq Scan on tests paper  (cost=0.00..1.07 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=1)
+                     Filter: (test_id = '2'::bigint)
+                     Rows Removed by Filter: 5
+                     Buffers: shared hit=1
+         ->  Seq Scan on test_questions paper_question  (cost=0.00..5.00 rows=40 width=8) (actual time=0.001..0.001 rows=1.00 loops=1)
+               Filter: (test_id = '2'::bigint)
+               Rows Removed by Filter: 1
+               Buffers: shared hit=2
+ Planning Time: 0.046 ms
+ Trigger for constraint attempts_user_id_fkey: time=0.016 calls=1
+ Trigger for constraint attempts_test_id_fkey: time=0.009 calls=1
+ Trigger attempts_guard: time=0.005 calls=1
+ Execution Time: 0.063 ms
+(27 rows)
+

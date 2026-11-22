@@ -1,0 +1,104 @@
+Actual plans captured with EXPLAIN (ANALYZE, BUFFERS)
+Database: cutoff_cp4_bench_2026; PostgreSQL 18.6; same prepared statement and fixture parameters as the timing report.
+Each write execution and its prerequisite fixture setup was enclosed in BEGIN/ROLLBACK.
+
+===== RUN 1 =====
+                                                                                  QUERY PLAN                                                                                   
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Insert on answers existing  (cost=0.00..7.74 rows=1 width=61) (actual time=0.009..0.009 rows=0.00 loops=1)
+   Conflict Resolution: UPDATE
+   Conflict Arbiter Indexes: answers_pkey
+   Tuples Inserted: 0
+   Conflicting Tuples: 0
+   Buffers: shared hit=4
+   ->  Nested Loop  (cost=0.00..7.74 rows=1 width=61) (actual time=0.009..0.009 rows=0.00 loops=1)
+         Join Filter: ((paper.test_id = attempt.test_id) AND (clock_timestamp() < (attempt.started_at + ((paper.duration_minutes)::double precision * '00:01:00'::interval))))
+         Rows Removed by Join Filter: 1
+         Buffers: shared hit=4
+         ->  Nested Loop  (cost=0.00..6.14 rows=1 width=28) (actual time=0.003..0.005 rows=1.00 loops=1)
+               Join Filter: (paper.test_id = paper_question.test_id)
+               Buffers: shared hit=3
+               ->  Seq Scan on test_questions paper_question  (cost=0.00..5.00 rows=1 width=16) (actual time=0.001..0.004 rows=1.00 loops=1)
+                     Filter: (question_id = '1'::bigint)
+                     Rows Removed by Filter: 119
+                     Buffers: shared hit=2
+               ->  Seq Scan on tests paper  (cost=0.00..1.06 rows=6 width=12) (actual time=0.001..0.001 rows=1.00 loops=1)
+                     Buffers: shared hit=1
+         ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=24) (actual time=0.001..0.002 rows=1.00 loops=1)
+               Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+               Rows Removed by Filter: 32
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=8
+ Planning Time: 0.106 ms
+ Execution Time: 0.565 ms
+(27 rows)
+
+
+
+===== RUN 2 =====
+                                                                                  QUERY PLAN                                                                                   
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Insert on answers existing  (cost=0.00..7.74 rows=1 width=61) (actual time=0.009..0.009 rows=0.00 loops=1)
+   Conflict Resolution: UPDATE
+   Conflict Arbiter Indexes: answers_pkey
+   Tuples Inserted: 0
+   Conflicting Tuples: 0
+   Buffers: shared hit=4
+   ->  Nested Loop  (cost=0.00..7.74 rows=1 width=61) (actual time=0.009..0.009 rows=0.00 loops=1)
+         Join Filter: ((paper.test_id = attempt.test_id) AND (clock_timestamp() < (attempt.started_at + ((paper.duration_minutes)::double precision * '00:01:00'::interval))))
+         Rows Removed by Join Filter: 1
+         Buffers: shared hit=4
+         ->  Nested Loop  (cost=0.00..6.14 rows=1 width=28) (actual time=0.003..0.006 rows=1.00 loops=1)
+               Join Filter: (paper.test_id = paper_question.test_id)
+               Buffers: shared hit=3
+               ->  Seq Scan on test_questions paper_question  (cost=0.00..5.00 rows=1 width=16) (actual time=0.002..0.004 rows=1.00 loops=1)
+                     Filter: (question_id = '1'::bigint)
+                     Rows Removed by Filter: 119
+                     Buffers: shared hit=2
+               ->  Seq Scan on tests paper  (cost=0.00..1.06 rows=6 width=12) (actual time=0.001..0.001 rows=1.00 loops=1)
+                     Buffers: shared hit=1
+         ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=24) (actual time=0.001..0.002 rows=1.00 loops=1)
+               Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+               Rows Removed by Filter: 32
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=8
+ Planning Time: 0.078 ms
+ Execution Time: 0.016 ms
+(27 rows)
+
+
+
+===== RUN 3 =====
+                                                                                  QUERY PLAN                                                                                   
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Insert on answers existing  (cost=0.00..7.74 rows=1 width=61) (actual time=0.008..0.008 rows=0.00 loops=1)
+   Conflict Resolution: UPDATE
+   Conflict Arbiter Indexes: answers_pkey
+   Tuples Inserted: 0
+   Conflicting Tuples: 0
+   Buffers: shared hit=4
+   ->  Nested Loop  (cost=0.00..7.74 rows=1 width=61) (actual time=0.008..0.008 rows=0.00 loops=1)
+         Join Filter: ((paper.test_id = attempt.test_id) AND (clock_timestamp() < (attempt.started_at + ((paper.duration_minutes)::double precision * '00:01:00'::interval))))
+         Rows Removed by Join Filter: 1
+         Buffers: shared hit=4
+         ->  Nested Loop  (cost=0.00..6.14 rows=1 width=28) (actual time=0.003..0.005 rows=1.00 loops=1)
+               Join Filter: (paper.test_id = paper_question.test_id)
+               Buffers: shared hit=3
+               ->  Seq Scan on test_questions paper_question  (cost=0.00..5.00 rows=1 width=16) (actual time=0.002..0.004 rows=1.00 loops=1)
+                     Filter: (question_id = '1'::bigint)
+                     Rows Removed by Filter: 119
+                     Buffers: shared hit=2
+               ->  Seq Scan on tests paper  (cost=0.00..1.06 rows=6 width=12) (actual time=0.001..0.001 rows=1.00 loops=1)
+                     Buffers: shared hit=1
+         ->  Seq Scan on attempts attempt  (cost=0.00..1.58 rows=1 width=24) (actual time=0.001..0.002 rows=1.00 loops=1)
+               Filter: ((user_id = '1'::bigint) AND (attempt_id = '1'::bigint) AND (attempt_status = 'IN_PROGRESS'::text))
+               Rows Removed by Filter: 32
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=8
+ Planning Time: 0.096 ms
+ Execution Time: 0.014 ms
+(27 rows)
+
